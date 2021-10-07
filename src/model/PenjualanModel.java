@@ -8,17 +8,25 @@ package model;
 import controller.PenjualanController;
 import java.awt.event.KeyEvent;
 import static java.awt.image.ImageObserver.HEIGHT;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.TimeZone;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import main.Main;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.view.JasperViewer;
 import popup.PopCariBarang;
 import view.TransaksiPenjualan;
 
@@ -37,8 +45,11 @@ public class PenjualanModel implements PenjualanController {
     ImageIcon invalid = new ImageIcon(getClass().getResource("/asset/cancel.png"));
     ImageIcon warning = new ImageIcon(getClass().getResource("/asset/warning.png"));
     String tglToday = "";
-    
-    
+    HashMap param = new HashMap();
+    JasperReport jasreport;
+    JasperPrint jasprint;
+    JasperDesign jasdesign;
+
     @Override
     public void fun_Clear(TransaksiPenjualan tp) {
         tp.tf_barcode.setText("");
@@ -47,6 +58,7 @@ public class PenjualanModel implements PenjualanController {
         tp.tf_qty.setText("");
         tp.tf_nominal.setText("");
         tp.tf_total.setText("0");
+        tp.tf_nomor.setText("");
         tp.txt_dibayarkan.setText("0");
         tp.txt_item.setText("0");
         tp.txt_kembali.setText("0");
@@ -118,15 +130,36 @@ public class PenjualanModel implements PenjualanController {
                 stat2.setString(6, netto);
                 stat2.executeUpdate();
             }
-            JOptionPane.showMessageDialog(null, "Transaksi Tersimpan", "Berhasil!", HEIGHT, sucess);
-            fun_Clear(tp);
-            fun_GenID(tp);
-            main.TglSekarang();
+            int ok = JOptionPane.showConfirmDialog(null, "Cetak Struk Pembelian ?", "Transaksi Selesai", JOptionPane.YES_NO_OPTION, HEIGHT, sucess);
+            if (ok == 0) {
+                try {
+                    String NamaFile = "src/report/struk.jasper";
+                    String URL = "jdbc:mysql://localhost:3306/";
+                    String DB = "agendist";
+                    String driver = "com.mysql.jdbc.Driver";
+                    String user = "root";
+                    String pass = "";
+                    Class.forName("com.mysql.jdbc.Driver").newInstance();
+                    Connection connect = DriverManager.getConnection(URL + DB, user, pass);
+                    HashMap param = new HashMap();
+                    param.put("id", tp.tf_idTrans.getText().toString());
+
+                    JasperPrint jPrint = JasperFillManager.fillReport(NamaFile, param, connect);
+                    JasperViewer.viewReport(jPrint, false);
+                    fun_Clear(tp);
+                    fun_GenID(tp);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Gagal" + e.getMessage(), "Alert Message!", HEIGHT);
+                }
+            } else {
+                fun_Clear(tp);
+                fun_GenID(tp);
+            }
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Gagal" + e.getMessage(), "Alert Message!", HEIGHT);
         }
     }
-    
 
     @Override
     public void fun_Delete(TransaksiPenjualan tp) {
@@ -146,30 +179,29 @@ public class PenjualanModel implements PenjualanController {
                     total += amount;
                 }
                 tp.txt_qty.setText("" + total);
-                
+
                 int harga = 0;
                 int jumlah = 0;
                 for (int i = 0; i < tp.table_penjualan.getRowCount(); i++) {
-                int amount1 = Integer.parseInt((String) tp.table_penjualan.getValueAt(i, 2));
-                harga += amount1;
-                int sum = harga * total;
-                jumlah += sum;
-            }
-            tp.tf_total.setText("" + jumlah);
+                    int amount1 = Integer.parseInt((String) tp.table_penjualan.getValueAt(i, 2));
+                    harga += amount1;
+                    int sum = harga * total;
+                    jumlah += sum;
                 }
+                tp.tf_total.setText("" + jumlah);
+            }
         }
     }
 
     @Override
-    public void fun_Table(TransaksiPenjualan tp) throws SQLException{
-        try{
+    public void fun_Table(TransaksiPenjualan tp) throws SQLException {
+        try {
             int pilih = tp.table_penjualan.getSelectedRow();
-            tp.tf_barcode.setText(tp.tblmodel.getValueAt(pilih,0).toString());
-            tp.tf_nama.setText(tp.tblmodel.getValueAt(pilih,1).toString());
-            tp.tf_harga.setText(tp.tblmodel.getValueAt(pilih,2).toString());
-            tp.tf_qty.setText(tp.tblmodel.getValueAt(pilih,3).toString());
-        }
-        catch(Exception e){
+            tp.tf_barcode.setText(tp.tblmodel.getValueAt(pilih, 0).toString());
+            tp.tf_nama.setText(tp.tblmodel.getValueAt(pilih, 1).toString());
+            tp.tf_harga.setText(tp.tblmodel.getValueAt(pilih, 2).toString());
+            tp.tf_qty.setText(tp.tblmodel.getValueAt(pilih, 3).toString());
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error, Please Try Again!");
         }
     }
@@ -188,7 +220,7 @@ public class PenjualanModel implements PenjualanController {
         int net = harjual * qty;
         netto += net;
         String jml = String.valueOf(netto);
-        
+
         tp.tblmodel = (DefaultTableModel) tp.table_penjualan.getModel();
         tp.tblmodel.addRow(new Object[]{
             tp.tf_barcode.getText(), tp.tf_nama.getText(), tp.tf_harga.getText(), tp.tf_qty.getText(), jml});
@@ -206,14 +238,13 @@ public class PenjualanModel implements PenjualanController {
             total += amount;
         }
         tp.txt_qty.setText("" + total);
-        
+
         //cek total
         int harga = 0;
         for (int i = 0; i < tp.table_penjualan.getRowCount(); i++) {
             int amount1 = Integer.parseInt((String) tp.table_penjualan.getValueAt(i, 4));
             harga += amount1;
         }
-        main.TglSekarang();
         tp.tf_total.setText(String.valueOf(harga));
     }
 
@@ -235,28 +266,27 @@ public class PenjualanModel implements PenjualanController {
                     total += amount;
                 }
                 tp.txt_qty.setText("" + total);
-                
+
                 int harga = 0;
                 int jumlah = 0;
                 for (int i = 0; i < tp.table_penjualan.getRowCount(); i++) {
-                int amount1 = Integer.parseInt((String) tp.table_penjualan.getValueAt(i, 2));
-                harga += amount1;
-                int sum = harga * total;
-                jumlah += sum;
-                tp.tf_qty.requestFocus();
+                    int amount1 = Integer.parseInt((String) tp.table_penjualan.getValueAt(i, 2));
+                    harga += amount1;
+                    int sum = harga * total;
+                    jumlah += sum;
+                    tp.tf_qty.requestFocus();
+                }
+                tp.tf_total.setText("" + jumlah);
+            } else {
+                tp.tf_barcode.setText("");
+                tp.tf_nama.setText("");
+                tp.tf_harga.setText("");
+                tp.tf_qty.setText("");
+                tp.tf_barcode.requestFocus();
             }
-            tp.tf_total.setText("" + jumlah);
-                }else{
-            tp.tf_barcode.setText("");
-            tp.tf_nama.setText("");
-            tp.tf_harga.setText("");
-            tp.tf_qty.setText("");
-            tp.tf_barcode.requestFocus();
         }
-        }
-        
+
     }
-    
 
     @Override
     public void fun_GenID(TransaksiPenjualan tp) throws SQLException {

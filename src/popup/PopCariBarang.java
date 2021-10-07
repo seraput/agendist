@@ -34,7 +34,7 @@ public class PopCariBarang extends javax.swing.JFrame {
     
     
     protected void TableExProduct() {
-        Object[] Baris = {"Barcode", "Nama", "Jenis", "Satuan", "Beli", "Jual", "Status"};
+        Object[] Baris = {"Barcode", "Nama", "Jenis", "Satuan", "Beli", "Jual", "Qtr"};
         dtmBarang = new DefaultTableModel(null, Baris);
 
         try {

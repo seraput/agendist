@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import menu.MenuItem;
 
 public class Main extends javax.swing.JFrame {
@@ -41,19 +42,42 @@ public class Main extends javax.swing.JFrame {
         initComponents();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         execute();
-        TglSekarang();
+        tanggal();
+        jam();
+//        TglSekarang();
+    }
+//    
+//    public void TglSekarang() {
+//        Date date = new Date();
+//        String myFormat = "yyyy-MM-dd";
+//        String jam = "hh:mm:ss";
+//        SimpleDateFormat sdj = new SimpleDateFormat(jam);
+//        SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
+//        TimeZone tz = TimeZone.getTimeZone("Asia/Jakarta");
+//        txt_jam.setText(sdj.format(date));
+//        txt_tanggal.setText(sdf.format(date));
+//        tanggal = sdf.format(date);
+//    }
+    
+    public void tanggal(){
+        Date d = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String date = sdf.format(d);
+        txt_tanggal.setText(date);
     }
     
-    public void TglSekarang() {
-        Date date = new Date();
-        String myFormat = "yyyy-MM-dd";
-        String jam = "hh:mm:ss";
-        SimpleDateFormat sdj = new SimpleDateFormat(jam);
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
-        TimeZone tz = TimeZone.getTimeZone("Asia/Jakarta");
-        txt_jam.setText(sdj.format(date));
-        txt_tanggal.setText(sdf.format(date));
-        tanggal = sdf.format(date);
+    public void jam(){
+        Timer time = new Timer(0, new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                Date dt = new Date();
+                SimpleDateFormat sdj = new SimpleDateFormat("hh:mm:ss");
+                String tt = sdj.format(dt);
+                txt_jam.setText(tt);
+            }
+            
+        });
+        time.start();
     }
     
      public static String getUsername() {
@@ -67,7 +91,6 @@ public class Main extends javax.swing.JFrame {
 
     private void execute() {
         
-        TglSekarang();
         ImageIcon iconDashboard = new ImageIcon(getClass().getResource("/Asset/dashboard24.png"));
         ImageIcon iconGeneral = new ImageIcon(getClass().getResource("/Asset/setting24.png"));
         ImageIcon iconPayment = new ImageIcon(getClass().getResource("/Asset/payment24.png"));
@@ -429,7 +452,6 @@ public class Main extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Main().TglSekarang();
                 new Main().setVisible(true);
                 
             }

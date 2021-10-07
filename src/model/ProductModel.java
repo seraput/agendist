@@ -218,14 +218,14 @@ public class ProductModel implements MasterProductController {
             rs = ps.executeQuery(query);
             while (rs.next()) {
                 if (rs.first() == false) {
-                    mp.product_id.setText("MB100001");
+                    mp.product_id.setText("MB1001");
                 } else {
                     rs.last();
                     int auto_id = rs.getInt(1) + 1;
                     String no = String.valueOf(auto_id);
                     int Nomor = no.length();
                     //MENGATUR jumlah 0
-                    for (int j = 0; j < 8 - Nomor; j++) {
+                    for (int j = 0; j < 4 - Nomor; j++) {
                         no = "0" + no;
                     }
                     mp.product_id.setText("MB" + no);
