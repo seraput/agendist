@@ -157,7 +157,7 @@ public class MasterUser extends javax.swing.JPanel {
 
         jLabel5.setText("Jabatan");
 
-        cb_jabatan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih", "Owner", "Admin", "Kasir", "Administrator" }));
+        cb_jabatan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih", "Owner", "Admin", "Kasir", "Sales", "Administrator" }));
 
         bt_simpan.setText("Simpan");
         bt_simpan.addActionListener(new java.awt.event.ActionListener() {

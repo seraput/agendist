@@ -22,4 +22,5 @@ public interface PenjualanController {
     public void fun_Tampil(TransaksiPenjualan tp);
     public void fun_Ubah(TransaksiPenjualan tp);
     public void fun_GenID(TransaksiPenjualan tp) throws SQLException;
+    public void fun_GetSales(TransaksiPenjualan tp) throws SQLException;
 }

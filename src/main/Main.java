@@ -1,4 +1,3 @@
-
 package main;
 
 import view.InventoryOpname;
@@ -32,65 +31,85 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import menu.MenuItem;
+import model.LoginModel;
+import view.LoginForm;
 
 public class Main extends javax.swing.JFrame {
-    
-    public static String username, tanggal;
 
-    
+    public static String username, tanggal;
+    public MenuItem menuDashboard, menuGeneral, menuInventory, menuTransaction, menuReport, menuUpload;
+
     public Main() {
         initComponents();
+
+        txt_username.setText(LoginModel.username);
+        jabatan.setText(LoginModel.jabatan);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         execute();
+        cekJabatan();
         tanggal();
         jam();
-//        TglSekarang();
     }
-//    
-//    public void TglSekarang() {
-//        Date date = new Date();
-//        String myFormat = "yyyy-MM-dd";
-//        String jam = "hh:mm:ss";
-//        SimpleDateFormat sdj = new SimpleDateFormat(jam);
-//        SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
-//        TimeZone tz = TimeZone.getTimeZone("Asia/Jakarta");
-//        txt_jam.setText(sdj.format(date));
-//        txt_tanggal.setText(sdf.format(date));
-//        tanggal = sdf.format(date);
-//    }
-    
-    public void tanggal(){
+
+    public void cekJabatan() {
+        String jb = jabatan.getText().toString();
+        if (jb.equals("Administrator")) {
+            menuDashboard.setVisible(true);
+            menuGeneral.setVisible(true);
+            menuInventory.setVisible(true);
+            menuTransaction.setVisible(true);
+            menuReport.setVisible(true);
+            menuUpload.setVisible(true);
+        } else if (jb.equals("Owner")) {
+            menuDashboard.setVisible(true);
+            menuGeneral.setVisible(false);
+            menuInventory.setVisible(true);
+            menuTransaction.setVisible(false);
+            menuReport.setVisible(true);
+            menuUpload.setVisible(false);
+        } else if (jb.equals("Kasir")) {
+            menuDashboard.setVisible(true);
+            menuGeneral.setVisible(true);
+            menuInventory.setVisible(true);
+            menuTransaction.setVisible(true);
+            menuReport.setVisible(false);
+            menuUpload.setVisible(true);
+        } else {
+
+        }
+    }
+
+    public void tanggal() {
         Date d = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         String date = sdf.format(d);
         txt_tanggal.setText(date);
     }
-    
-    public void jam(){
-        Timer time = new Timer(0, new ActionListener(){
+
+    public void jam() {
+        Timer time = new Timer(0, new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 Date dt = new Date();
                 SimpleDateFormat sdj = new SimpleDateFormat("hh:mm:ss");
                 String tt = sdj.format(dt);
                 txt_jam.setText(tt);
             }
-            
+
         });
         time.start();
     }
-    
-     public static String getUsername() {
+
+    public static String getUsername() {
         return username;
     }
 
     public static String getTanggal() {
         return tanggal;
     }
-   
 
     private void execute() {
-        
+
         ImageIcon iconDashboard = new ImageIcon(getClass().getResource("/Asset/dashboard24.png"));
         ImageIcon iconGeneral = new ImageIcon(getClass().getResource("/Asset/setting24.png"));
         ImageIcon iconPayment = new ImageIcon(getClass().getResource("/Asset/payment24.png"));
@@ -98,7 +117,7 @@ public class Main extends javax.swing.JFrame {
         ImageIcon iconInventory = new ImageIcon(getClass().getResource("/Asset/inventory24.png"));
         ImageIcon iconUpload = new ImageIcon(getClass().getResource("/Asset/upload24.png"));
         ImageIcon iconSubMenu = new ImageIcon(getClass().getResource("/Asset/submenu14.png"));
-        
+
         //   submenu general master        
         MenuItem user = new MenuItem(iconSubMenu, "User Master", new ActionListener() {
             @Override
@@ -113,7 +132,7 @@ public class Main extends javax.swing.JFrame {
                 panelBody.revalidate();
             }
         });
-        MenuItem data = new MenuItem(iconSubMenu, "Data Master", new ActionListener(){
+        MenuItem data = new MenuItem(iconSubMenu, "Data Master", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
@@ -122,8 +141,8 @@ public class Main extends javax.swing.JFrame {
                 panelBody.revalidate();
             }
         });
-       
-        MenuItem discount = new MenuItem(iconSubMenu, "Promo Master", new ActionListener(){
+
+        MenuItem discount = new MenuItem(iconSubMenu, "Promo Master", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
@@ -132,7 +151,7 @@ public class Main extends javax.swing.JFrame {
                 panelBody.revalidate();
             }
         });
-        MenuItem payment = new MenuItem(iconSubMenu, "Payment Master", new ActionListener(){
+        MenuItem payment = new MenuItem(iconSubMenu, "Payment Master", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
@@ -141,10 +160,9 @@ public class Main extends javax.swing.JFrame {
                 panelBody.revalidate();
             }
         });
-        
-        
+
         //  submenu inventory
-        MenuItem product = new MenuItem(iconSubMenu, "Master Barang", new ActionListener(){
+        MenuItem product = new MenuItem(iconSubMenu, "Master Barang", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
@@ -157,8 +175,8 @@ public class Main extends javax.swing.JFrame {
                 panelBody.revalidate();
             }
         });
-        
-        MenuItem menuReject = new MenuItem(iconSubMenu, "Stock Reject", new ActionListener(){
+
+        MenuItem menuReject = new MenuItem(iconSubMenu, "Stock Reject", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
@@ -167,18 +185,18 @@ public class Main extends javax.swing.JFrame {
                 panelBody.revalidate();
             }
         });
-        MenuItem menuOpname = new MenuItem(iconSubMenu, "Stock Opname", new ActionListener(){
+        MenuItem menuOpname = new MenuItem(iconSubMenu, "Stock Opname", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
                 panelBody.add(new InventoryOpname());
                 panelBody.repaint();
                 panelBody.revalidate();
-            } 
+            }
         });
 
         //  submenu transaction 
-        MenuItem menuSales = new MenuItem(iconSubMenu, "Penjualan", new ActionListener(){
+        MenuItem menuSales = new MenuItem(iconSubMenu, "Penjualan", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
@@ -189,92 +207,92 @@ public class Main extends javax.swing.JFrame {
                 }
                 panelBody.repaint();
                 panelBody.revalidate();
-            } 
+            }
         });
-        MenuItem menuKeluar = new MenuItem(iconSubMenu, "Pengeluaran", new ActionListener(){
+        MenuItem menuKeluar = new MenuItem(iconSubMenu, "Pengeluaran", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
                 panelBody.add(new TransaksiPengeluaran());
                 panelBody.repaint();
                 panelBody.revalidate();
-            } 
+            }
         });
-        MenuItem menuMasuk = new MenuItem(iconSubMenu, "Penerimaan", new ActionListener(){
+        MenuItem menuMasuk = new MenuItem(iconSubMenu, "Penerimaan", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
                 panelBody.add(new TransaksiPenerimaan());
                 panelBody.repaint();
                 panelBody.revalidate();
-            } 
+            }
         });
-        
+
         //  submenu report 
-        MenuItem reportPenjualan = new MenuItem(iconSubMenu, "Report Penjualan", new ActionListener(){
+        MenuItem reportPenjualan = new MenuItem(iconSubMenu, "Report Penjualan", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
                 panelBody.add(new ReportPenjualan());
                 panelBody.repaint();
                 panelBody.revalidate();
-            } 
+            }
         });
-        MenuItem reportStock = new MenuItem(iconSubMenu, "Report Stock", new ActionListener(){
+        MenuItem reportStock = new MenuItem(iconSubMenu, "Report Stock", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
                 panelBody.add(new ReportStock());
                 panelBody.repaint();
                 panelBody.revalidate();
-            } 
+            }
         });
-        MenuItem reportPelanggan = new MenuItem(iconSubMenu, "Report Pelanggan", new ActionListener(){
+        MenuItem reportPelanggan = new MenuItem(iconSubMenu, "Report Pelanggan", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
                 panelBody.add(new ReportPelanggan());
                 panelBody.repaint();
                 panelBody.revalidate();
-            } 
+            }
         });
-        
+
         //  submenu upload 
-        MenuItem uploadBarang = new MenuItem(iconSubMenu, "Upload Data Stock", new ActionListener(){
+        MenuItem uploadBarang = new MenuItem(iconSubMenu, "Upload Data Stock", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
                 panelBody.add(new UploadStock());
                 panelBody.repaint();
                 panelBody.revalidate();
-            } 
+            }
         });
-        MenuItem uploadUser = new MenuItem(iconSubMenu, "Upload Data Employee", new ActionListener(){
+        MenuItem uploadUser = new MenuItem(iconSubMenu, "Upload Data Employee", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
                 panelBody.add(new UploadEmployee());
                 panelBody.repaint();
                 panelBody.revalidate();
-            } 
+            }
         });
-        MenuItem uploadPelanggan = new MenuItem(iconSubMenu, "Upload Data Pelanggan", new ActionListener(){
+        MenuItem uploadPelanggan = new MenuItem(iconSubMenu, "Upload Data Pelanggan", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
                 panelBody.add(new UploadPelanggan());
                 panelBody.repaint();
                 panelBody.revalidate();
-            } 
+            }
         });
 
         //  main menu
-        MenuItem menuDashboard = new MenuItem(iconDashboard, "Home - Dashboard", null);
-        MenuItem menuGeneral = new MenuItem(iconGeneral, "General Master", null, user, data, discount, payment);
-        MenuItem menuInventory = new MenuItem(iconInventory, "Inventory", null, product, menuReject, menuOpname);
-        MenuItem menuTransaction = new MenuItem(iconPayment, "Transaksi", null, menuSales, menuKeluar, menuMasuk);
-        MenuItem menuReport = new MenuItem(iconReport, "Report", null, reportPenjualan, reportStock, reportPelanggan);
-        MenuItem menuUpload = new MenuItem(iconUpload, "Upload", null, uploadBarang, uploadUser, uploadPelanggan);
+        menuDashboard = new MenuItem(iconDashboard, "Home - Dashboard", null);
+        menuGeneral = new MenuItem(iconGeneral, "General Master", null, user, data, discount, payment);
+        menuInventory = new MenuItem(iconInventory, "Inventory", null, product, menuReject, menuOpname);
+        menuTransaction = new MenuItem(iconPayment, "Transaksi", null, menuSales, menuKeluar, menuMasuk);
+        menuReport = new MenuItem(iconReport, "Report", null, reportPenjualan, reportStock, reportPelanggan);
+        menuUpload = new MenuItem(iconUpload, "Upload", null, uploadBarang, uploadUser, uploadPelanggan);
         addMenu(menuDashboard, menuGeneral, menuInventory, menuTransaction, menuReport, menuUpload);
     }
 
@@ -303,12 +321,16 @@ public class Main extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txt_tanggal = new javax.swing.JLabel();
         txt_username = new javax.swing.JLabel();
+        jabatan = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        jSeparator2 = new javax.swing.JSeparator();
         txt_jam = new javax.swing.JLabel();
         panelMenu = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         menus = new javax.swing.JPanel();
         panelBody = new javax.swing.JPanel();
         footer = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -319,17 +341,24 @@ public class Main extends javax.swing.JFrame {
 
         jLabel2.setBackground(new java.awt.Color(255, 255, 255));
         jLabel2.setFont(new java.awt.Font("Rockwell", 1, 18)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel2.setText("Logo");
+        jLabel2.setForeground(new java.awt.Color(51, 51, 51));
+        jLabel2.setText("TOKO AGEN");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel1.setText("Hallo,");
+        jLabel1.setText("Selamat Datang");
 
         txt_tanggal.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         txt_tanggal.setText("Tanggal");
 
-        txt_username.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
-        txt_username.setText("jLabel4");
+        txt_username.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        txt_username.setText("username");
+
+        jabatan.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
+        jabatan.setText("jabatan");
+
+        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
+        jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
         txt_jam.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         txt_jam.setText("Jam");
@@ -339,36 +368,48 @@ public class Main extends javax.swing.JFrame {
         panelHeaderLayout.setHorizontalGroup(
             panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelHeaderLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(52, 52, 52)
                 .addComponent(jLabel2)
-                .addGroup(panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelHeaderLayout.createSequentialGroup()
-                        .addGap(177, 177, 177)
+                .addGap(55, 55, 55)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(1, 1, 1)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelHeaderLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_username)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 509, Short.MAX_VALUE)
-                        .addComponent(txt_jam))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelHeaderLayout.createSequentialGroup()
+                        .addComponent(txt_username, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 326, Short.MAX_VALUE)
+                        .addComponent(txt_tanggal))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelHeaderLayout.createSequentialGroup()
+                        .addComponent(jabatan, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txt_tanggal)))
+                        .addComponent(txt_jam)))
                 .addContainerGap())
         );
         panelHeaderLayout.setVerticalGroup(
             panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelHeaderLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1)
-                    .addComponent(txt_username))
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addComponent(jLabel2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelHeaderLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(txt_jam)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_tanggal)
-                .addGap(5, 5, 5))
+                .addGroup(panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator1)
+                    .addGroup(panelHeaderLayout.createSequentialGroup()
+                        .addGap(7, 7, 7)
+                        .addGroup(panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txt_username)
+                            .addComponent(jLabel1)
+                            .addComponent(txt_tanggal))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jabatan)
+                            .addComponent(txt_jam))
+                        .addGap(5, 5, 5)))
+                .addGap(2, 2, 2))
         );
 
         getContentPane().add(panelHeader, java.awt.BorderLayout.PAGE_START);
@@ -391,7 +432,7 @@ public class Main extends javax.swing.JFrame {
         );
         panelMenuLayout.setVerticalGroup(
             panelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
         );
 
         getContentPane().add(panelMenu, java.awt.BorderLayout.LINE_START);
@@ -403,17 +444,32 @@ public class Main extends javax.swing.JFrame {
 
         footer.setBackground(new java.awt.Color(255, 255, 255));
         footer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        footer.setPreferredSize(new java.awt.Dimension(855, 30));
+        footer.setPreferredSize(new java.awt.Dimension(855, 50));
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/logout24.png"))); // NOI18N
+        jLabel3.setText("Keluar");
+        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel3MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout footerLayout = new javax.swing.GroupLayout(footer);
         footer.setLayout(footerLayout);
         footerLayout.setHorizontalGroup(
             footerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 851, Short.MAX_VALUE)
+            .addGroup(footerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addContainerGap(777, Short.MAX_VALUE))
         );
         footerLayout.setVerticalGroup(
             footerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 26, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, footerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         getContentPane().add(footer, java.awt.BorderLayout.PAGE_END);
@@ -421,6 +477,14 @@ public class Main extends javax.swing.JFrame {
         setSize(new java.awt.Dimension(871, 473));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
+        int ok = JOptionPane.showConfirmDialog(null, "Yakin Mau Keluar?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+        if (ok == 0) {
+            this.dispose();
+            new LoginForm().show();
+        }
+    }//GEN-LAST:event_jLabel3MouseClicked
 
     /**
      * @param args the command line arguments
@@ -452,8 +516,9 @@ public class Main extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Main().setVisible(true);
-                
+//                new Main().setVisible(true);
+                new LoginForm().setVisible(true);
+
             }
         });
     }
@@ -462,7 +527,11 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel footer;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    public javax.swing.JLabel jabatan;
     private javax.swing.JPanel menus;
     private javax.swing.JPanel panelBody;
     private javax.swing.JPanel panelHeader;

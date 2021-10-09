@@ -5,16 +5,18 @@
 	<property name="ireport.y" value="0"/>
 	<parameter name="id" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[
-SELECT ph.id, ph.`kasir`, ph.`tanggal`, pd.`nama`, pd.`harga`, pd.`qty`, pd.`netto`, ph.`total_qty`, ph.`total_harga`, ph.`pembayaran`, ph.`total_harga`, ph.`nominal`, ph.`kembali` FROM penjualan_detail pd JOIN penjualan_header ph ON ph.id = pd.id WHERE ph.id=$P{id}]]>
+		<![CDATA[SELECT ph.id, ph.`sales`, ph.`tanggal`, ph.`jam`, pd.`nama`, pd.`harga`, pd.`qty`, pd.`netto`, ph.`total_qty`, ph.`total_harga`, ph.`pembayaran`, ph.`total_harga`, ph.`nominal`, ph.`kembali` FROM penjualan_detail pd JOIN penjualan_header ph ON ph.id = pd.id WHERE ph.id=$P{id}]]>
 	</queryString>
 	<field name="id" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="kasir" class="java.lang.String">
+	<field name="sales" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="tanggal" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="jam" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="nama" class="java.lang.String">
@@ -79,18 +81,18 @@ SELECT ph.id, ph.`kasir`, ph.`tanggal`, pd.`nama`, pd.`harga`, pd.`qty`, pd.`net
 	<pageHeader>
 		<band height="78" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="24" width="53" height="16" uuid="9c40a8f1-d0d6-4ba7-b21e-ceca07424a4d"/>
+				<reportElement x="0" y="8" width="52" height="16" uuid="9c40a8f1-d0d6-4ba7-b21e-ceca07424a4d"/>
 				<textElement>
 					<font size="11"/>
 				</textElement>
-				<text><![CDATA[No Struk  :]]></text>
+				<text><![CDATA[No Struk :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="175" y="4" width="35" height="17" uuid="580ed7d8-e867-4d38-aaaf-971859d14306"/>
+				<reportElement x="3" y="27" width="50" height="17" uuid="580ed7d8-e867-4d38-aaaf-971859d14306"/>
 				<textElement>
 					<font size="11"/>
 				</textElement>
-				<text><![CDATA[Kasir :]]></text>
+				<text><![CDATA[Sales     :]]></text>
 			</staticText>
 			<line>
 				<reportElement x="-1" y="54" width="257" height="1" uuid="7da23d35-20f3-4ce1-a5ce-5082e60c8d76"/>
@@ -105,23 +107,24 @@ SELECT ph.id, ph.`kasir`, ph.`tanggal`, pd.`nama`, pd.`harga`, pd.`qty`, pd.`net
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="58" y="24" width="100" height="16" uuid="5b3f74f9-135e-4cf7-a537-a87795f8bfa4"/>
+				<reportElement x="52" y="8" width="84" height="16" uuid="5b3f74f9-135e-4cf7-a537-a87795f8bfa4"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="207" y="4" width="48" height="17" uuid="908c21fd-6625-4a38-b8aa-d63abf58b060"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{kasir}]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement x="0" y="4" width="53" height="18" uuid="bad41e18-8c42-4636-96f4-974c5d773c19"/>
+				<reportElement x="148" y="6" width="48" height="18" uuid="bad41e18-8c42-4636-96f4-974c5d773c19"/>
 				<textElement>
 					<font size="11"/>
 				</textElement>
-				<text><![CDATA[Tanggal   :]]></text>
+				<text><![CDATA[Tanggal :]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="58" y="4" width="70" height="18" uuid="7a3d7de3-a555-4415-af10-ba7eeda1d09f"/>
+				<reportElement x="202" y="7" width="64" height="18" uuid="7a3d7de3-a555-4415-af10-ba7eeda1d09f"/>
+				<textElement>
+					<font size="11"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{tanggal}]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -140,6 +143,27 @@ SELECT ph.id, ph.`kasir`, ph.`tanggal`, pd.`nama`, pd.`harga`, pd.`qty`, pd.`net
 				<reportElement x="228" y="57" width="29" height="20" uuid="3b7ca6a6-9828-4c50-999d-466a603c8ef2"/>
 				<text><![CDATA[Netto]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="202" y="27" width="65" height="20" uuid="6fdbdc80-5e8d-4be6-aab0-660dc40d9f90"/>
+				<textElement>
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{jam}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="157" y="27" width="39" height="20" uuid="30dac431-8ce9-4097-b2e4-bc0a5bbf983f"/>
+				<textElement>
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[Jam    :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="52" y="27" width="84" height="20" uuid="f27b2871-1c1b-41b9-b816-625b6161fc96"/>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sales}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>

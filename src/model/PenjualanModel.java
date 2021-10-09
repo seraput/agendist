@@ -95,12 +95,12 @@ public class PenjualanModel implements PenjualanController {
 
     @Override
     public void fun_Simpan(TransaksiPenjualan tp) throws SQLException {
-        String query = "INSERT INTO `penjualan_header`(`id`, `kasir`, `tanggal`, `jam`, `total_barang`, `total_qty`, `total_harga`, `pembayaran`, `bank`, `nomor`, `nominal`, `kembali`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+        String query = "INSERT INTO `penjualan_header`(`id`, `sales`, `tanggal`, `jam`, `total_barang`, `total_qty`, `total_harga`, `pembayaran`, `bank`, `nomor`, `nominal`, `kembali`, `created`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
         String query2 = "INSERT INTO `penjualan_detail`(`id`, `barcode`, `nama`, `harga`, `qty`, `netto`) VALUES (?,?,?,?,?,?)";
         try {
             ps = koneksi.Server.getConnection().prepareStatement(query);
             ps.setString(1, tp.tf_idTrans.getText().trim());
-            ps.setString(2, main.txt_username.getText().trim());
+            ps.setString(2, tp.cb_sales.getSelectedItem().toString());
             ps.setString(3, main.txt_tanggal.getText().trim());
             ps.setString(4, main.txt_jam.getText().trim());
             ps.setString(5, tp.txt_item.getText());
@@ -111,6 +111,7 @@ public class PenjualanModel implements PenjualanController {
             ps.setString(10, tp.tf_nomor.getText());
             ps.setString(11, tp.tf_nominal.getText());
             ps.setString(12, tp.txt_kembali.getText());
+            ps.setString(13, main.txt_username.getText().trim());
             ps.executeUpdate();
 
             int t = tp.table_penjualan.getRowCount();
@@ -155,6 +156,8 @@ public class PenjualanModel implements PenjualanController {
                 fun_Clear(tp);
                 fun_GenID(tp);
             }
+            fun_Clear(tp);
+            fun_GenID(tp);
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Gagal" + e.getMessage(), "Alert Message!", HEIGHT);
@@ -213,39 +216,64 @@ public class PenjualanModel implements PenjualanController {
 
     @Override
     public void fun_Tambah(TransaksiPenjualan tp) {
-        //cek netto
-        int netto = 0;
-        int qty = Integer.parseInt(tp.tf_qty.getText());
-        int harjual = Integer.parseInt(tp.tf_harga.getText());
-        int net = harjual * qty;
-        netto += net;
-        String jml = String.valueOf(netto);
+        String stokDB = "";
+        try {
+            String cekStock = "select stok from product where id='" + tp.tf_barcode.getText() + "'";
+            Statement stat = koneksi.Server.getConnection().createStatement();
+            ResultSet hasil = stat.executeQuery(cekStock);
+            while (hasil.next()) {
+                stokDB = hasil.getString("stok");
+            }
+            int qtyDB = Integer.parseInt(stokDB);
+            int input = Integer.parseInt(tp.tf_qty.getText());
+            if (qtyDB < input) {
+                JOptionPane.showMessageDialog(null, "Stok Kurang Dari Permintaan!", "Gagal", HEIGHT, invalid);
+                tp.tf_qty.setText("");
+                tp.tf_qty.requestFocus();
+            } else {
+                if (qtyDB < 5) {
+                    JOptionPane.showMessageDialog(null, "Stok Barang Menipis Kurang dari 5", "Alert Message", HEIGHT, warning);
+                }
+                //cek netto
+                int netto = 0;
+                int qty = Integer.parseInt(tp.tf_qty.getText());
+                int harjual = Integer.parseInt(tp.tf_harga.getText());
+                int net = harjual * qty;
+                netto += net;
+                String jml = String.valueOf(netto);
 
-        tp.tblmodel = (DefaultTableModel) tp.table_penjualan.getModel();
-        tp.tblmodel.addRow(new Object[]{
-            tp.tf_barcode.getText(), tp.tf_nama.getText(), tp.tf_harga.getText(), tp.tf_qty.getText(), jml});
-        tp.table_penjualan.setModel(tp.tblmodel);
-        int row = tp.tblmodel.getRowCount();
-        tp.txt_item.setText("" + row);
-        tp.tf_barcode.setText("");
-        tp.tf_nama.setText("");
-        tp.tf_harga.setText("");
-        tp.tf_qty.setText("");
-        //cek row
-        int total = 0;
-        for (int i = 0; i < tp.table_penjualan.getRowCount(); i++) {
-            int amount = Integer.parseInt((String) tp.table_penjualan.getValueAt(i, 3));
-            total += amount;
-        }
-        tp.txt_qty.setText("" + total);
+                tp.tblmodel = (DefaultTableModel) tp.table_penjualan.getModel();
+                tp.tblmodel.addRow(new Object[]{
+                    tp.tf_barcode.getText(), tp.tf_nama.getText(), tp.tf_harga.getText(), tp.tf_qty.getText(), jml});
+                tp.table_penjualan.setModel(tp.tblmodel);
+                int row = tp.tblmodel.getRowCount();
+                tp.txt_item.setText("" + row);
+                tp.tf_barcode.setText("");
+                tp.tf_nama.setText("");
+                tp.tf_harga.setText("");
+                tp.tf_qty.setText("");
+                //cek row
+                int total = 0;
+                for (int i = 0; i < tp.table_penjualan.getRowCount(); i++) {
+                    int amount = Integer.parseInt((String) tp.table_penjualan.getValueAt(i, 3));
+                    total += amount;
+                }
+                tp.txt_qty.setText("" + total);
 
-        //cek total
-        int harga = 0;
-        for (int i = 0; i < tp.table_penjualan.getRowCount(); i++) {
-            int amount1 = Integer.parseInt((String) tp.table_penjualan.getValueAt(i, 4));
-            harga += amount1;
+                //cek total
+                int harga = 0;
+                for (int i = 0; i < tp.table_penjualan.getRowCount(); i++) {
+                    int amount1 = Integer.parseInt((String) tp.table_penjualan.getValueAt(i, 4));
+                    harga += amount1;
+                }
+                tp.tf_total.setText(String.valueOf(harga));
+                tp.tf_barcode.requestFocus();
+
+            }
+        } catch (Exception e) {
+
         }
-        tp.tf_total.setText(String.valueOf(harga));
+
     }
 
     @Override
@@ -312,6 +340,22 @@ public class PenjualanModel implements PenjualanController {
             rs.close();
         } catch (Exception e) {
             e.printStackTrace();//penanganan masalah
+        }
+    }
+
+    @Override
+    public void fun_GetSales(TransaksiPenjualan tp) throws SQLException {
+        try {
+            String query = "SELECT * FROM user WHERE jabatan='Sales' ORDER BY username ASC";
+            ps = koneksi.Server.getConnection().prepareStatement(query);
+            rs = ps.executeQuery(query);
+            tp.cb_sales.removeAllItems();
+            tp.cb_sales.addItem("Pilih");
+            while (rs.next()) {
+                tp.cb_sales.addItem(rs.getString("nama"));
+            }
+        } catch (Exception e) {
+
         }
     }
 
