@@ -5,7 +5,6 @@
  */
 package view;
 
-import com.stripbandunk.jwidget.model.DefaultPaginationModel;
 import static java.awt.image.ImageObserver.HEIGHT;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -62,7 +61,6 @@ public class ReportPenjualan extends javax.swing.JPanel {
         jLabel6 = new javax.swing.JLabel();
         txt_label = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        pagination = new com.stripbandunk.jwidget.JPagination();
         t_netto = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -130,12 +128,6 @@ public class ReportPenjualan extends javax.swing.JPanel {
             }
         });
 
-        pagination.addPaginationListener(new com.stripbandunk.jwidget.listener.PaginationListener() {
-            public void onPageChange(com.stripbandunk.jwidget.event.PaginationEvent evt) {
-                paginationOnPageChange(evt);
-            }
-        });
-
         t_netto.setText("jLabel7");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -147,8 +139,7 @@ public class ReportPenjualan extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(pagination, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(68, 68, 68)
+                        .addGap(100, 100, 100)
                         .addComponent(t_netto)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -172,10 +163,8 @@ public class ReportPenjualan extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pagination, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(t_netto))
-                .addGap(7, 7, 7))
+                .addComponent(t_netto)
+                .addGap(24, 24, 24))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
@@ -417,7 +406,6 @@ public class ReportPenjualan extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private com.stripbandunk.jwidget.JPagination pagination;
     public com.toedter.calendar.JDateChooser start_date;
     public javax.swing.JButton submit;
     public javax.swing.JLabel t_netto;
