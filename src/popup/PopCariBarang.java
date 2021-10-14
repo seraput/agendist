@@ -9,8 +9,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+import model.mTransPenjualan;
 import view.TransaksiPenjualan;
 
 /**
@@ -22,19 +27,26 @@ public class PopCariBarang extends javax.swing.JFrame {
     /**
      * Creates new form PopCariBarang
      */
+    mTransPenjualan pml = new mTransPenjualan();
     PreparedStatement ps;
     ResultSet rs;
     private DefaultTableModel dtmBarang;
     public TransaksiPenjualan tp = null;
-    
+
     public PopCariBarang() {
         initComponents();
         TableExProduct();
     }
-    
-    
+
+    private void Cari() {
+        DefaultTableModel model = (DefaultTableModel) table_masterbarang.getModel();
+        TableRowSorter<DefaultTableModel> tr = new TableRowSorter<DefaultTableModel>(model);
+        table_masterbarang.setRowSorter(tr);
+        tr.setRowFilter(RowFilter.regexFilter(tf_cari.getText().trim()));
+    }
+
     protected void TableExProduct() {
-        Object[] Baris = {"Barcode", "Nama", "Jenis", "Satuan", "Beli", "Jual", "Qtr"};
+        Object[] Baris = {"ID", "Nama", "Jenis", "Satuan", "Jual", "Qty"};
         dtmBarang = new DefaultTableModel(null, Baris);
 
         try {
@@ -47,7 +59,6 @@ public class PopCariBarang extends javax.swing.JFrame {
                     hasil.getString(2),
                     hasil.getString(3),
                     hasil.getString(4),
-                    hasil.getString(5),
                     hasil.getString(6),
                     hasil.getString(7)
                 });
@@ -74,10 +85,13 @@ public class PopCariBarang extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         tf_cari = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         table_masterbarang.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -100,8 +114,25 @@ public class PopCariBarang extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel1.setText("Master Barang");
 
+        tf_cari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tf_cariKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tf_cariKeyTyped(evt);
+            }
+        });
+
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         jLabel2.setText("Barcode / Nama");
+
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/close24.png"))); // NOI18N
+        jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel3MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -110,31 +141,33 @@ public class PopCariBarang extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE)
+                        .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(tf_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addGap(175, 175, 175)
-                                .addComponent(jLabel1)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                                .addComponent(jLabel1))
+                            .addComponent(tf_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(11, 11, 11)
                         .addComponent(jLabel1)
-                        .addGap(18, 18, 18))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                .addComponent(tf_cari, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+                        .addGap(1, 1, 1)
+                        .addComponent(jLabel2))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tf_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -157,11 +190,30 @@ public class PopCariBarang extends javax.swing.JFrame {
         int tabelEx = table_masterbarang.getSelectedRow();
         tp.exBarcode = table_masterbarang.getValueAt(tabelEx, 0).toString();
         tp.exNama = table_masterbarang.getValueAt(tabelEx, 1).toString();
-        tp.exHarga = table_masterbarang.getValueAt(tabelEx, 5).toString();
-        tp.itemTerpilihBarang();
-        tp.tf_qty.requestFocus();
-        this.dispose();
+        tp.exHarga = table_masterbarang.getValueAt(tabelEx, 4).toString();
+
+        try {
+            tp.itemTerpilihBarang();
+            this.dispose();
+            pml.fun_AlertStok(tp);
+        } catch (SQLException ex) {
+            Logger.getLogger(PopCariBarang.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_table_masterbarangMouseClicked
+
+    private void tf_cariKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cariKeyTyped
+        Cari();
+    }//GEN-LAST:event_tf_cariKeyTyped
+
+    private void tf_cariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cariKeyReleased
+        int position = tf_cari.getCaretPosition();
+        tf_cari.setText(tf_cari.getText().toUpperCase());
+        tf_cari.setCaretPosition(position);
+    }//GEN-LAST:event_tf_cariKeyReleased
+
+    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
+        this.dispose();
+    }//GEN-LAST:event_jLabel3MouseClicked
 
     /**
      * @param args the command line arguments
@@ -201,6 +253,7 @@ public class PopCariBarang extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable table_masterbarang;

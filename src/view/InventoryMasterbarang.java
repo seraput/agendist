@@ -12,8 +12,8 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import model.ProductModel;
-import model.UserModel;
+import model.mInvMasterbarang;
+import model.mMasterUser;
 
 /**
  *
@@ -22,7 +22,7 @@ import model.UserModel;
 public class InventoryMasterbarang extends javax.swing.JPanel {
     
     public DefaultTableModel tblmodel;
-    ProductModel pm = new ProductModel();
+    mInvMasterbarang pm = new mInvMasterbarang();
     ImageIcon sucess = new ImageIcon(getClass().getResource("/asset/checked.png"));
     ImageIcon invalid = new ImageIcon(getClass().getResource("/asset/cancel.png"));
     ImageIcon warning = new ImageIcon(getClass().getResource("/asset/warning.png"));

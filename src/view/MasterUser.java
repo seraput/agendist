@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import model.UserModel;
+import model.mMasterUser;
 
 /**
  *
@@ -23,7 +23,7 @@ import model.UserModel;
 public class MasterUser extends javax.swing.JPanel {
     
     public DefaultTableModel tblmodel;
-    UserModel um = new UserModel();
+    mMasterUser um = new mMasterUser();
     ImageIcon sucess = new ImageIcon(getClass().getResource("/asset/checked.png"));
     ImageIcon invalid = new ImageIcon(getClass().getResource("/asset/cancel.png"));
     ImageIcon warning = new ImageIcon(getClass().getResource("/asset/warning.png"));

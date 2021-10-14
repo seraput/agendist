@@ -175,11 +175,11 @@
 				<reportElement x="-1" y="1" width="90" height="20" uuid="f589a44a-a947-4619-ac95-dcd254594193"/>
 				<textFieldExpression><![CDATA[$F{nama}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0;#,##0-">
 				<reportElement x="136" y="0" width="66" height="20" uuid="65053e16-b739-405c-966d-895df9e135d6"/>
 				<textFieldExpression><![CDATA[$F{harga}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0;#,##0-">
 				<reportElement x="207" y="1" width="48" height="20" uuid="d6805051-ac61-4703-b2ab-7308430ef2e3"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{netto}]]></textFieldExpression>
@@ -210,7 +210,7 @@
 				</textElement>
 				<text><![CDATA[Item]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="#,##0;#,##0-">
 				<reportElement x="157" y="7" width="100" height="20" uuid="d71099f0-9dc7-4b08-85ce-75f061373473"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{total_harga}]]></textFieldExpression>
@@ -229,7 +229,7 @@
 				<reportElement x="122" y="37" width="5" height="20" uuid="b743304e-a00d-4c0d-833d-49fd88ab6570"/>
 				<text><![CDATA[:]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="#,##0;#,##0-">
 				<reportElement x="156" y="59" width="100" height="20" uuid="df7b128e-b6c9-43cd-bdfd-a504e80e71f9"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{nominal}]]></textFieldExpression>
@@ -242,7 +242,7 @@
 				<reportElement x="122" y="59" width="5" height="20" uuid="2c7c0d6e-dc6a-4624-a247-9d6887755b4d"/>
 				<text><![CDATA[:]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="#,##0;#,##0-">
 				<reportElement x="157" y="37" width="100" height="20" uuid="0d910699-7a5c-4303-8c80-0cb83de1865e"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{total_harga}]]></textFieldExpression>
@@ -255,7 +255,7 @@
 				<reportElement x="123" y="85" width="5" height="20" uuid="42eaf62e-94de-4df9-bbd9-43cb3d2ea8cf"/>
 				<text><![CDATA[:]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="#,##0;#,##0-">
 				<reportElement x="156" y="85" width="100" height="20" uuid="2ca199a4-46f8-45bf-ab9b-b1c02f40f8df"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{kembali}]]></textFieldExpression>

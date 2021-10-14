@@ -10,8 +10,9 @@ import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.LoginModel;
-import model.UserModel;
+import main.Main;
+import model.mLogin;
+import model.mMasterUser;
 
 /**
  *
@@ -19,7 +20,7 @@ import model.UserModel;
  */
 public class LoginForm extends javax.swing.JFrame {
 
-    LoginModel lm = new LoginModel();
+    mLogin lm = new mLogin();
 
     /**
      * Creates new form LoginForm

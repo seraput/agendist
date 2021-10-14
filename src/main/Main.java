@@ -2,10 +2,9 @@ package main;
 
 import view.InventoryOpname;
 import view.InventoryReject;
-import view.MasterPayment;
+import view.MasterBank;
 import view.MasterUser;
-import view.MasterData;
-import view.MasterDiscount;
+import view.MasterDistributor;
 import view.InventoryMasterbarang;
 import view.ReportPelanggan;
 import view.ReportPenjualan;
@@ -31,7 +30,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import menu.MenuItem;
-import model.LoginModel;
+import model.mLogin;
 import view.LoginForm;
 
 public class Main extends javax.swing.JFrame {
@@ -42,8 +41,8 @@ public class Main extends javax.swing.JFrame {
     public Main() {
         initComponents();
 
-        txt_username.setText(LoginModel.username);
-        jabatan.setText(LoginModel.jabatan);
+        txt_username.setText(mLogin.username);
+        jabatan.setText(mLogin.jabatan);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         execute();
         cekJabatan();
@@ -52,28 +51,28 @@ public class Main extends javax.swing.JFrame {
     }
 
     public void cekJabatan() {
-        String jb = jabatan.getText().toString();
+        String jb = jabatan.getText();
         if (jb.equals("Administrator")) {
             menuDashboard.setVisible(true);
             menuGeneral.setVisible(true);
             menuInventory.setVisible(true);
             menuTransaction.setVisible(true);
             menuReport.setVisible(true);
-            menuUpload.setVisible(true);
+//            menuUpload.setVisible(true);
         } else if (jb.equals("Owner")) {
             menuDashboard.setVisible(true);
             menuGeneral.setVisible(false);
             menuInventory.setVisible(true);
             menuTransaction.setVisible(false);
             menuReport.setVisible(true);
-            menuUpload.setVisible(false);
+//            menuUpload.setVisible(false);
         } else if (jb.equals("Kasir")) {
             menuDashboard.setVisible(true);
             menuGeneral.setVisible(true);
             menuInventory.setVisible(true);
             menuTransaction.setVisible(true);
             menuReport.setVisible(false);
-            menuUpload.setVisible(true);
+//            menuUpload.setVisible(true);
         } else {
 
         }
@@ -132,30 +131,29 @@ public class Main extends javax.swing.JFrame {
                 panelBody.revalidate();
             }
         });
-        MenuItem data = new MenuItem(iconSubMenu, "Data Master", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                panelBody.removeAll();
-                panelBody.add(new MasterData());
-                panelBody.repaint();
-                panelBody.revalidate();
-            }
-        });
 
-        MenuItem discount = new MenuItem(iconSubMenu, "Promo Master", new ActionListener() {
+        MenuItem discount = new MenuItem(iconSubMenu, "Distributor", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
-                panelBody.add(new MasterDiscount());
+                try {
+                    panelBody.add(new MasterDistributor());
+                } catch (SQLException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 panelBody.repaint();
                 panelBody.revalidate();
             }
         });
-        MenuItem payment = new MenuItem(iconSubMenu, "Payment Master", new ActionListener() {
+        MenuItem bank = new MenuItem(iconSubMenu, "Bank Master", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 panelBody.removeAll();
-                panelBody.add(new MasterPayment());
+                try {
+                    panelBody.add(new MasterBank());
+                } catch (SQLException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 panelBody.repaint();
                 panelBody.revalidate();
             }
@@ -209,43 +207,31 @@ public class Main extends javax.swing.JFrame {
                 panelBody.revalidate();
             }
         });
-        MenuItem menuKeluar = new MenuItem(iconSubMenu, "Pengeluaran", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                panelBody.removeAll();
-                panelBody.add(new TransaksiPengeluaran());
-                panelBody.repaint();
-                panelBody.revalidate();
-            }
+        MenuItem menuKeluar = new MenuItem(iconSubMenu, "Pengeluaran Barang", (ActionEvent ae) -> {
+            panelBody.removeAll();
+            panelBody.add(new TransaksiPengeluaran());
+            panelBody.repaint();
+            panelBody.revalidate();
         });
-        MenuItem menuMasuk = new MenuItem(iconSubMenu, "Penerimaan", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                panelBody.removeAll();
-                panelBody.add(new TransaksiPenerimaan());
-                panelBody.repaint();
-                panelBody.revalidate();
-            }
+        MenuItem menuMasuk = new MenuItem(iconSubMenu, "Penerimaan Barang", (ActionEvent ae) -> {
+            panelBody.removeAll();
+            panelBody.add(new TransaksiPenerimaan());
+            panelBody.repaint();
+            panelBody.revalidate();
         });
 
         //  submenu report 
-        MenuItem reportPenjualan = new MenuItem(iconSubMenu, "Report Penjualan", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                panelBody.removeAll();
-                panelBody.add(new ReportPenjualan());
-                panelBody.repaint();
-                panelBody.revalidate();
-            }
+        MenuItem reportPenjualan = new MenuItem(iconSubMenu, "Report Penjualan", (ActionEvent ae) -> {
+            panelBody.removeAll();
+            panelBody.add(new ReportPenjualan());
+            panelBody.repaint();
+            panelBody.revalidate();
         });
-        MenuItem reportStock = new MenuItem(iconSubMenu, "Report Stock", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                panelBody.removeAll();
-                panelBody.add(new ReportStock());
-                panelBody.repaint();
-                panelBody.revalidate();
-            }
+        MenuItem reportStock = new MenuItem(iconSubMenu, "Report Stock", (ActionEvent ae) -> {
+            panelBody.removeAll();
+            panelBody.add(new ReportStock());
+            panelBody.repaint();
+            panelBody.revalidate();
         });
         MenuItem reportPelanggan = new MenuItem(iconSubMenu, "Report Pelanggan", new ActionListener() {
             @Override
@@ -288,12 +274,12 @@ public class Main extends javax.swing.JFrame {
 
         //  main menu
         menuDashboard = new MenuItem(iconDashboard, "Home - Dashboard", null);
-        menuGeneral = new MenuItem(iconGeneral, "General Master", null, user, data, discount, payment);
+        menuGeneral = new MenuItem(iconGeneral, "General Master", null, user, discount, bank);
         menuInventory = new MenuItem(iconInventory, "Inventory", null, product, menuReject, menuOpname);
         menuTransaction = new MenuItem(iconPayment, "Transaksi", null, menuSales, menuKeluar, menuMasuk);
-        menuReport = new MenuItem(iconReport, "Report", null, reportPenjualan, reportStock, reportPelanggan);
-        menuUpload = new MenuItem(iconUpload, "Upload", null, uploadBarang, uploadUser, uploadPelanggan);
-        addMenu(menuDashboard, menuGeneral, menuInventory, menuTransaction, menuReport, menuUpload);
+        menuReport = new MenuItem(iconReport, "Report", null, reportPenjualan, reportStock);
+//        menuUpload = new MenuItem(iconUpload, "Upload", null, uploadBarang, uploadUser, uploadPelanggan);
+        addMenu(menuDashboard, menuGeneral, menuInventory, menuTransaction, menuReport);
     }
 
     private void addMenu(MenuItem... menu) {
@@ -317,7 +303,6 @@ public class Main extends javax.swing.JFrame {
     private void initComponents() {
 
         panelHeader = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         txt_tanggal = new javax.swing.JLabel();
         txt_username = new javax.swing.JLabel();
@@ -338,11 +323,6 @@ public class Main extends javax.swing.JFrame {
         panelHeader.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         panelHeader.setForeground(new java.awt.Color(255, 255, 255));
         panelHeader.setPreferredSize(new java.awt.Dimension(561, 50));
-
-        jLabel2.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel2.setFont(new java.awt.Font("Rockwell", 1, 18)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(51, 51, 51));
-        jLabel2.setText("TOKO AGEN");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1.setText("Selamat Datang");
@@ -368,48 +348,44 @@ public class Main extends javax.swing.JFrame {
         panelHeaderLayout.setHorizontalGroup(
             panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelHeaderLayout.createSequentialGroup()
-                .addGap(52, 52, 52)
-                .addComponent(jLabel2)
-                .addGap(55, 55, 55)
+                .addContainerGap()
+                .addGroup(panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelHeaderLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(10, 10, 10)
+                        .addComponent(txt_username, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jabatan, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelHeaderLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_username, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 326, Short.MAX_VALUE)
-                        .addComponent(txt_tanggal))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelHeaderLayout.createSequentialGroup()
-                        .addComponent(jabatan, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txt_jam)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 570, Short.MAX_VALUE)
+                .addGroup(panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txt_tanggal, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txt_jam, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         panelHeaderLayout.setVerticalGroup(
             panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelHeaderLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelHeaderLayout.createSequentialGroup()
                 .addGroup(panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator1)
                     .addGroup(panelHeaderLayout.createSequentialGroup()
-                        .addGap(7, 7, 7)
-                        .addGroup(panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txt_username)
-                            .addComponent(jLabel1)
-                            .addComponent(txt_tanggal))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txt_tanggal)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jabatan)
-                            .addComponent(txt_jam))
-                        .addGap(5, 5, 5)))
+                        .addComponent(txt_jam)
+                        .addGap(10, 10, 10)))
                 .addGap(2, 2, 2))
+            .addGroup(panelHeaderLayout.createSequentialGroup()
+                .addGap(7, 7, 7)
+                .addGroup(panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(txt_username))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jabatan)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         getContentPane().add(panelHeader, java.awt.BorderLayout.PAGE_START);
@@ -438,7 +414,6 @@ public class Main extends javax.swing.JFrame {
         getContentPane().add(panelMenu, java.awt.BorderLayout.LINE_START);
 
         panelBody.setBackground(new java.awt.Color(204, 204, 204));
-        panelBody.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         panelBody.setLayout(new java.awt.BorderLayout());
         getContentPane().add(panelBody, java.awt.BorderLayout.CENTER);
 
@@ -526,7 +501,6 @@ public class Main extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel footer;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;

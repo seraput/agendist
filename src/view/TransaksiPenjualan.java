@@ -5,6 +5,9 @@
  */
 package view;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,11 +24,17 @@ import javax.swing.table.DefaultTableModel;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import static java.util.Collections.replaceAll;
-import model.PenjualanModel;
+import model.mTransPenjualan;
 import popup.PopCariBarang;
 
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
+import javax.swing.JFormattedTextField;
+import javax.swing.Timer;
+import javax.swing.text.NumberFormatter;
+import org.apache.poi.xslf.usermodel.Placeholder;
 
 /**
  *
@@ -34,30 +43,35 @@ import java.util.Locale;
 public class TransaksiPenjualan extends javax.swing.JPanel {
 
     public DefaultTableModel tblmodel;
-    PenjualanModel pm = new PenjualanModel();
-    DecimalFormat kursIndonesia;
-    DecimalFormatSymbols formatRupiah;
+
+    public DefaultTableModel tablemodelProduk;
+    mTransPenjualan pm = new mTransPenjualan();
     double nilai;
+    String convert_total = "";
     ImageIcon sucess = new ImageIcon(getClass().getResource("/asset/checked.png"));
     ImageIcon invalid = new ImageIcon(getClass().getResource("/asset/cancel.png"));
     ImageIcon warning = new ImageIcon(getClass().getResource("/asset/warning.png"));
-
+    public String harga_total = "";
+    public String kembalian = "";
+    public String nominal_bayar = "";
     public String exBarcode, exNama, exHarga;
+    private JFormattedTextField formattedTextField;
 
     public TransaksiPenjualan() throws SQLException {
         initComponents();
+        pm.objectTable(this);
         panel_kredit.setVisible(false);
-        itemTerpilihBarang();
         pm.fun_GenID(this);
 //        pm.fun_GetSales(this);
 
-        kursIndonesia = (DecimalFormat) DecimalFormat.getCurrencyInstance();
-        formatRupiah = new DecimalFormatSymbols();
+    }
 
-        formatRupiah.setCurrencySymbol("Rp. ");
-        formatRupiah.setMonetaryDecimalSeparator(',');
-        formatRupiah.setGroupingSeparator('.');
-        kursIndonesia.setDecimalFormatSymbols(formatRupiah);
+    public void run() {
+        try {
+            pm.fun_GetKredit(TransaksiPenjualan.this);
+        } catch (SQLException ex) {
+            Logger.getLogger(TransaksiPenjualan.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void FilterAngka(KeyEvent b) {
@@ -67,12 +81,15 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
         }
     }
 
-    public void itemTerpilihBarang() {
+    public void itemTerpilihBarang() throws SQLException {
         PopCariBarang pcb = new PopCariBarang();
         pcb.tp = this;
         tf_barcode.setText(exBarcode);
         tf_nama.setText(exNama);
-        tf_harga.setText(exHarga);
+        String S1_angka_normal = String.valueOf(exHarga);
+        double D1_angka_Normal = Double.parseDouble(S1_angka_normal);
+        DecimalFormat DF2 = new DecimalFormat("#,###,##0");
+        tf_harga.setText(DF2.format(D1_angka_Normal));
     }
 
     /**
@@ -89,7 +106,6 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
         tf_idTrans = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        tf_total = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         cb_tipe = new javax.swing.JComboBox<>();
         jLabel10 = new javax.swing.JLabel();
@@ -101,20 +117,25 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
         txt_dibayarkan = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         txt_kembali = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        bt_batal = new javax.swing.JButton();
+        bt_selesai = new javax.swing.JButton();
         panel_kredit = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         tf_nomor = new javax.swing.JTextField();
         cb_kartu = new javax.swing.JComboBox<>();
         jLabel20 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel17 = new javax.swing.JLabel();
+        txt_totalharga = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table_penjualan = new javax.swing.JTable();
         tf_barcode = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        min = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         txt_item = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
@@ -166,16 +187,30 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel8.setText("Total Harga");
 
-        tf_total.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        tf_total.setEnabled(false);
-
         jLabel9.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel9.setText("Metode Pembayaran");
 
-        cb_tipe.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih", "Tunai", "Debit", "Kredit" }));
+        cb_tipe.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih", "Tunai", "Transfer", "Kredit", "Digital" }));
         cb_tipe.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 cb_tipeItemStateChanged(evt);
+            }
+        });
+        cb_tipe.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cb_tipeFocusLost(evt);
+            }
+        });
+        cb_tipe.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+                cb_tipeCaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
+        });
+        cb_tipe.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                cb_tipePropertyChange(evt);
             }
         });
 
@@ -187,6 +222,9 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
         tf_nominal.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         tf_nominal.setEnabled(false);
         tf_nominal.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tf_nominalKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 tf_nominalKeyReleased(evt);
             }
@@ -207,17 +245,17 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
         txt_kembali.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         txt_kembali.setText("0");
 
-        jButton3.setText("Batal");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        bt_batal.setText("Batal");
+        bt_batal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                bt_batalActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Selesai");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        bt_selesai.setText("Selesai");
+        bt_selesai.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                bt_selesaiActionPerformed(evt);
             }
         });
 
@@ -231,7 +269,12 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
             }
         });
 
-        cb_kartu.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-", "BCA", "MANDIRI", "DIGITAL" }));
+        cb_kartu.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-" }));
+        cb_kartu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cb_kartuMouseClicked(evt);
+            }
+        });
 
         jLabel20.setText("Nomor Kartu");
 
@@ -260,6 +303,39 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jLabel14.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel14.setText("Rp. ");
+
+        jLabel15.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel15.setText("Rp. ");
+
+        jLabel17.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+        jLabel17.setText("Rp.");
+
+        txt_totalharga.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+        txt_totalharga.setText("0");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel17)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_totalharga, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel17)
+                    .addComponent(txt_totalharga, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(33, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -281,17 +357,24 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
                             .addComponent(tf_nominal, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8)
-                            .addComponent(tf_total, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel18)
-                            .addComponent(txt_dibayarkan)
-                            .addComponent(txt_kembali)
                             .addComponent(jLabel16)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(jPanel4Layout.createSequentialGroup()
+                                    .addComponent(jLabel14)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(txt_dibayarkan, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE))
+                                .addComponent(jLabel18, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                                    .addComponent(bt_selesai, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(bt_batal, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                                    .addComponent(jLabel15)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(txt_kembali, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel9)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -301,8 +384,8 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tf_total, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel9)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -316,23 +399,27 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
                         .addComponent(tf_nominal, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panel_kredit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel16)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_dibayarkan)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_dibayarkan)
+                    .addComponent(jLabel14))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel18)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_kembali)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_kembali)
+                    .addComponent(jLabel15))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(54, 54, 54))
+                    .addComponent(bt_batal, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bt_selesai, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(54, Short.MAX_VALUE))
         );
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
@@ -343,7 +430,7 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Barcode ID", "Nama Barang", "Harga", "Qty", "Netto"
+
             }
         ));
         table_penjualan.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -376,12 +463,13 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
             }
         });
 
-        jButton2.setBackground(new java.awt.Color(255, 0, 51));
-        jButton2.setText("-");
-        jButton2.setPreferredSize(new java.awt.Dimension(41, 23));
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        min.setBackground(new java.awt.Color(255, 0, 51));
+        min.setText("-");
+        min.setEnabled(false);
+        min.setPreferredSize(new java.awt.Dimension(41, 23));
+        min.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                minActionPerformed(evt);
             }
         });
 
@@ -395,6 +483,11 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
 
         tf_nama.setEnabled(false);
 
+        tf_qty.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tf_qtyMouseClicked(evt);
+            }
+        });
         tf_qty.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 tf_qtyKeyPressed(evt);
@@ -410,10 +503,26 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel6.setText("Qty");
 
-        tf_harga.setEnabled(false);
+        tf_harga.setForeground(new java.awt.Color(204, 204, 204));
+        tf_harga.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                tf_hargaFocusLost(evt);
+            }
+        });
+        tf_harga.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tf_hargaMouseClicked(evt);
+            }
+        });
         tf_harga.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tf_hargaKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 tf_hargaKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tf_hargaKeyTyped(evt);
             }
         });
 
@@ -486,7 +595,7 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
                         .addGap(18, 18, Short.MAX_VALUE)
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(min, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel13)
@@ -514,10 +623,10 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
                     .addComponent(bt_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tf_nama)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(min, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(tf_barcode, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -555,9 +664,9 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
 
     }//GEN-LAST:event_tf_barcodePropertyChange
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void minActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minActionPerformed
         pm.fun_Delete(this);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_minActionPerformed
 
     private void tf_barcodeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_barcodeKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -577,7 +686,17 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
             if (input < 1) {
                 JOptionPane.showMessageDialog(null, "Qty Belum Terisi!", "Perhatian!", HEIGHT, warning);
             } else {
-                pm.fun_Tambah(this);
+                if (tf_harga.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Harga Jual Kosong!", "Perhatian!", HEIGHT, warning);
+                    tf_harga.requestFocus();
+                } else {
+                    try {
+                        pm.fun_CekStok(this);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(TransaksiPenjualan.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
             }
 
         } else {
@@ -590,11 +709,19 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void cb_tipeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cb_tipeItemStateChanged
-        if (evt.getItem().equals("Debit")) {
+//        persentase();
+        if (evt.getItem().equals("Transfer")) {
+            run();
             panel_kredit.setVisible(true);
             tf_nominal.setEnabled(true);
             tf_nomor.setText("");
         } else if (evt.getItem().equals("Kredit")) {
+            run();
+            panel_kredit.setVisible(true);
+            tf_nominal.setEnabled(true);
+            tf_nomor.setText("");
+        } else if (evt.getItem().equals("Digital")) {
+            run();
             panel_kredit.setVisible(true);
             tf_nominal.setEnabled(true);
             tf_nomor.setText("");
@@ -610,36 +737,28 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
     }//GEN-LAST:event_cb_tipeItemStateChanged
 
     private void tf_hargaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_hargaKeyReleased
-
+        String har = tf_harga.getText().replaceAll("\\,", "");
+        double harga = Double.parseDouble(har);
+        DecimalFormat df = new DecimalFormat("#,###,##0");
+        if (harga > 999) {
+            tf_harga.setText(df.format(harga));
+        }
     }//GEN-LAST:event_tf_hargaKeyReleased
 
     private void tf_nominalKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_nominalKeyTyped
-        char c = evt.getKeyChar();
-        if (Character.isLetter(c) && !evt.isAltDown()) {
-            evt.consume();
-        }
-        if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-            if (tf_nominal.getText().length() == 1) {
-                tf_nominal.setText("0");
-                txt_dibayarkan.setText("0");
-            }
-        }
+        FilterAngka(evt);
     }//GEN-LAST:event_tf_nominalKeyTyped
 
     private void bt_cariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_cariActionPerformed
         PopCariBarang pcb = new PopCariBarang();
         pcb.tp = this;
+        min.setEnabled(false);
         pcb.setVisible(true);
         pcb.setResizable(false);
     }//GEN-LAST:event_bt_cariActionPerformed
 
     private void table_penjualanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_table_penjualanMouseClicked
-        try {
-            pm.fun_Table(this);
-            pm.fun_Ubah(this);
-        } catch (SQLException ex) {
-            Logger.getLogger(TransaksiPenjualan.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        pm.fun_Ubah(this);
     }//GEN-LAST:event_table_penjualanMouseClicked
 
     private void tf_nomorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_nomorKeyReleased
@@ -649,28 +768,21 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
     }//GEN-LAST:event_tf_nomorKeyReleased
 
     private void tf_nominalKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_nominalKeyReleased
-        String S_angka_normal = tf_nominal.getText().replaceAll("\\,", "");
-        double D_angka_Normal = Double.parseDouble(S_angka_normal);
-        DecimalFormat DF = new DecimalFormat("#,###,##0");
-        txt_dibayarkan.setText(DF.format(D_angka_Normal));
-//
-//        nilai = Double.valueOf(tf_nominal.getText().trim());
-//        tf_nominal.setText(kursIndonesia.format(nilai));
-//
-//        String nilai_ribuan = tf_nominal.getText(); // Hasil Normal
-//        txt_dibayarkan.setText(tf_nominal.getText()); // Hasil ribuan
-
-        int bayar = Integer.parseInt(tf_nominal.getText());
-        int total = Integer.parseInt(tf_total.getText());
-        int kembali = bayar - total;
-        txt_kembali.setText(String.valueOf(kembali));
-
-
+        if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            if (tf_nominal.getText().length() == 0) {
+                txt_dibayarkan.setText("0");
+            }
+        }
+        pm.fun_bayar(this);
     }//GEN-LAST:event_tf_nominalKeyReleased
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void bt_selesaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_selesaiActionPerformed
+        String t = txt_totalharga.getText().replaceAll("\\,", "");
+        String n = tf_nominal.getText().replaceAll("\\,", "");
+        String k = txt_kembali.getText().replaceAll("\\,", "");
+
         String pembayaran = cb_tipe.getSelectedItem().toString();
-        int bayar = Integer.parseInt(txt_kembali.getText());
+        int bayar = Integer.parseInt(k);
         int row = Integer.parseInt(txt_item.getText());
         String sales = cb_sales.getSelectedItem().toString();
         if (sales.equals("Pilih")) {
@@ -681,6 +793,9 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
                     JOptionPane.showMessageDialog(null, "Nominal Kurang Dari Total Harga!", "Perhatian!", HEIGHT, warning);
                 } else {
                     if (pembayaran.equals("Tunai")) {
+                        harga_total = t;
+                        nominal_bayar = n;
+                        kembalian = k;
                         try {
                             pm.fun_Simpan(this);
                         } catch (SQLException ex) {
@@ -688,8 +803,11 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
                         }
                     } else {
                         if (cb_kartu.getSelectedItem().equals("Pilih") || tf_nomor.getText().isEmpty()) {
-                            JOptionPane.showMessageDialog(null, "Atribut Kartu Belum Lengkap!", "Perhatian!", HEIGHT, warning);
+                            JOptionPane.showMessageDialog(null, "Data Kartu Belum Lengkap!", "Perhatian!", HEIGHT, warning);
                         } else {
+                            harga_total = t;
+                            nominal_bayar = n;
+                            kembalian = k;
                             try {
                                 pm.fun_Simpan(this);
                             } catch (SQLException ex) {
@@ -702,14 +820,14 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(null, "Tipe Pembayaran & Nominal Kosong!", "Perhatian!", HEIGHT, warning);
             }
         }
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_bt_selesaiActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void bt_batalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_batalActionPerformed
         int ok = JOptionPane.showConfirmDialog(null, "Yakin Mau Hapus?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
         if (ok == 0) {
             pm.fun_Clear(this);
         }
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_bt_batalActionPerformed
 
     private void cb_salesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cb_salesMouseClicked
 
@@ -731,22 +849,80 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
         FilterAngka(evt);
     }//GEN-LAST:event_tf_qtyKeyTyped
 
+    private void tf_hargaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_hargaKeyTyped
+        FilterAngka(evt);
+    }//GEN-LAST:event_tf_hargaKeyTyped
+
+    private void tf_hargaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tf_hargaMouseClicked
+        tf_harga.setText("");
+        tf_harga.setForeground(new Color(0, 0, 0));
+
+    }//GEN-LAST:event_tf_hargaMouseClicked
+
+    private void tf_hargaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_hargaKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            tf_qty.requestFocus();
+        }
+    }//GEN-LAST:event_tf_hargaKeyPressed
+
+    private void tf_nominalKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_nominalKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tf_nominalKeyPressed
+
+    private void tf_qtyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tf_qtyMouseClicked
+
+    }//GEN-LAST:event_tf_qtyMouseClicked
+
+    private void tf_hargaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tf_hargaFocusLost
+        int asli = Integer.parseInt(exHarga);
+        int harjual = Integer.parseInt(tf_harga.getText().replaceAll("\\,", ""));
+
+        if (harjual < asli) {
+            JOptionPane.showMessageDialog(null, "Harga Jual Kurang Dari Harga Asli!", "Perhatian!", HEIGHT, warning);
+            String S1_angka_normal = String.valueOf(exHarga);
+            double D1_angka_Normal = Double.parseDouble(S1_angka_normal);
+            DecimalFormat DF2 = new DecimalFormat("#,###,##0");
+            tf_harga.setText(DF2.format(D1_angka_Normal));
+            tf_harga.setForeground(new Color(204, 204, 204));
+        } else {
+            tf_qty.requestFocus();
+        }
+    }//GEN-LAST:event_tf_hargaFocusLost
+
+    private void cb_kartuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cb_kartuMouseClicked
+
+    }//GEN-LAST:event_cb_kartuMouseClicked
+
+    private void cb_tipePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_cb_tipePropertyChange
+
+    }//GEN-LAST:event_cb_tipePropertyChange
+
+    private void cb_tipeCaretPositionChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_cb_tipeCaretPositionChanged
+
+    }//GEN-LAST:event_cb_tipeCaretPositionChanged
+
+    private void cb_tipeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cb_tipeFocusLost
+
+    }//GEN-LAST:event_cb_tipeFocusLost
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JButton bt_batal;
     public javax.swing.JButton bt_cari;
+    public javax.swing.JButton bt_selesai;
     public javax.swing.JComboBox<String> cb_kartu;
     public javax.swing.JComboBox<String> cb_sales;
     public javax.swing.JComboBox<String> cb_tipe;
     public javax.swing.JButton jButton1;
-    public javax.swing.JButton jButton2;
-    public javax.swing.JButton jButton3;
-    public javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
@@ -757,12 +933,14 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    public javax.swing.JButton min;
     private javax.swing.JPanel panel_kredit;
     public javax.swing.JTable table_penjualan;
     public javax.swing.JTextField tf_barcode;
@@ -772,10 +950,10 @@ public class TransaksiPenjualan extends javax.swing.JPanel {
     public javax.swing.JTextField tf_nominal;
     public javax.swing.JTextField tf_nomor;
     public javax.swing.JTextField tf_qty;
-    public javax.swing.JTextField tf_total;
     public javax.swing.JLabel txt_dibayarkan;
     public javax.swing.JLabel txt_item;
     public javax.swing.JLabel txt_kembali;
     public javax.swing.JLabel txt_qty;
+    public javax.swing.JLabel txt_totalharga;
     // End of variables declaration//GEN-END:variables
 }

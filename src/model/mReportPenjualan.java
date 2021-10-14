@@ -1,0 +1,343 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package model;
+
+import static java.awt.image.ImageObserver.HEIGHT;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.view.JasperViewer;
+import view.ReportPenjualan;
+import controller.RepPenjualanController;
+import java.text.DecimalFormat;
+import javax.swing.table.DefaultTableCellRenderer;
+
+/**
+ *
+ * @author Dell
+ */
+public class mReportPenjualan implements RepPenjualanController {
+
+    protected java.sql.Connection con;
+    protected PreparedStatement ps;
+    protected ResultSet rs;
+    protected Statement st;
+
+    public ImageIcon sucess = new ImageIcon(getClass().getResource("/asset/checked.png"));
+    public ImageIcon invalid = new ImageIcon(getClass().getResource("/asset/cancel.png"));
+    public ImageIcon warning = new ImageIcon(getClass().getResource("/asset/warning.png"));
+
+    HashMap param = new HashMap();
+    JasperReport jasreport;
+    JasperPrint jasprint;
+    JasperDesign jasdesign;
+    String n = "";
+
+    @Override
+    public void fun_Clear(view.ReportPenjualan rp) {
+        rp.start_date.setCalendar(null);
+        rp.end_date.setCalendar(null);
+        rp.cb_parameter.setSelectedItem("Pilih");
+        rp.cb_sales.setSelectedItem("Pilih");
+        rp.submit.setEnabled(false);
+        ((DefaultTableModel) rp.tb_report.getModel()).setNumRows(0);
+    }
+
+    @Override
+    public void fun_TarikBySales(view.ReportPenjualan rp) throws SQLException {
+        fun_ObjectPersales(rp);
+        atur_tableSales(rp);
+        String sales = rp.cb_sales.getSelectedItem().toString();
+        String startDate = ((JTextField) rp.start_date.getDateEditor().getUiComponent()).getText();
+        String endDate = ((JTextField) rp.end_date.getDateEditor().getUiComponent()).getText();
+        try {
+            con = koneksi.Server.getConnection();
+            st = con.createStatement();
+            String sql
+                    = "SELECT penjualan_header.`sales` AS 'Salesman', product.`nama` AS 'Nama Produk', penjualan_detail.`qty` AS 'Total Qty',\n" +
+"(SELECT FORMAT(penjualan_detail.`netto`, 'C', 'de-DE')) AS 'netto',(SELECT FORMAT(penjualan_detail.`netto`*0.8, 'C', 'de-DE')) AS '80',\n" +
+"(SELECT FORMAT(penjualan_detail.`netto`*0.2, 'C', 'de-DE')) AS '20',(SELECT FORMAT(penjualan_detail.`netto`*0.7, 'C', 'de-DE')) AS '70',\n" +
+"(SELECT FORMAT(penjualan_detail.`netto`*0.3, 'C', 'de-DE')) AS '30',(SELECT FORMAT(penjualan_detail.`netto`*0.6, 'C', 'de-DE')) AS '60',\n" +
+"(SELECT FORMAT(penjualan_detail.`netto`*0.4, 'C', 'de-DE')) AS '40'\n" +
+"FROM penjualan_header JOIN penjualan_detail ON penjualan_header.`id`=penjualan_detail.`id` JOIN product ON penjualan_detail.`barcode`= product.`id` WHERE penjualan_header.`sales`='"+sales+"' AND penjualan_header.`tanggal` BETWEEN '"+startDate+"' AND '"+endDate+"' ORDER BY penjualan_header.`sales` ASC;";
+            rs = st.executeQuery(sql);
+            while (rs.next()) {
+                rp.dtm.addRow(new Object[]{
+                    rs.getString(1),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getString(4),
+                    rs.getString(5),
+                    rs.getString(6),
+                    rs.getString(7),
+                    rs.getString(8),
+                    rs.getString(9),
+                    rs.getString(10)
+                });
+            }
+            rp.tb_report.setModel(rp.dtm);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+    
+    @Override
+    public void fun_TarikDetail(view.ReportPenjualan rp) throws SQLException {
+        fun_ObjectTableDetail(rp);
+        String startDate = ((JTextField) rp.start_date.getDateEditor().getUiComponent()).getText();
+        String endDate = ((JTextField) rp.end_date.getDateEditor().getUiComponent()).getText();
+        String sales = rp.cb_sales.getSelectedItem().toString();
+        try {
+            con = koneksi.Server.getConnection();
+            st = con.createStatement();
+            String sql
+                    = "SELECT penjualan_header.`tanggal` AS 'tanggal', penjualan_header.`sales` AS 'sales', product.`nama` AS 'produk', penjualan_detail.`qty` AS 'qty',\n"
+                    + "penjualan_detail.`netto` AS 'netto', penjualan_detail.`netto`*0.8 AS 'n8', penjualan_detail.`netto`*0.2 AS 'n2',\n"
+                    + "penjualan_detail.`netto`*0.7 AS 'n7', penjualan_detail.`netto`*0.3 AS 'n3', penjualan_detail.`netto`*0.6 AS 'n6',\n"
+                    + "penjualan_detail.`netto`*0.4 AS 'n4' FROM penjualan_header JOIN penjualan_detail ON penjualan_header.`id`=penjualan_detail.`id`\n"
+                    + "JOIN product ON penjualan_detail.`barcode`= product.`id` WHERE penjualan_header.sales = '"+sales+"' AND penjualan_header.`tanggal` BETWEEN '"+startDate+"' AND '"+endDate+"' ORDER BY penjualan_header.`tanggal` ASC;";
+            rs = st.executeQuery(sql);
+            while (rs.next()) {
+                rp.dtm = (DefaultTableModel) rp.tb_report.getModel();
+                rp.dtm.addRow(new Object[]{
+                    rs.getString(1),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getString(4),
+                    rs.getString(5),
+                    rs.getString(6),
+                    rs.getString(7),
+                    rs.getString(8),
+                    rs.getString(9),
+                    rs.getString(10),
+                    rs.getString(11)
+                });
+            }
+            rp.tb_report.setModel(rp.dtm);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    @Override
+    public void fun_TarikDetailSemua(view.ReportPenjualan rp) throws SQLException {
+        fun_ObjectTableDetail(rp);
+        String startDate = ((JTextField) rp.start_date.getDateEditor().getUiComponent()).getText();
+        String endDate = ((JTextField) rp.end_date.getDateEditor().getUiComponent()).getText();
+        try {
+            con = koneksi.Server.getConnection();
+            st = con.createStatement();
+            String sql
+                    = "SELECT penjualan_header.`tanggal` AS 'Tanggal', penjualan_header.`sales` AS 'Salesman', product.`nama` AS 'Nama Produk', penjualan_detail.`qty` AS 'Total Qty',\n" +
+"(SELECT FORMAT(penjualan_detail.`netto`, 'C', 'de-DE')) AS 'netto',(SELECT FORMAT(penjualan_detail.`netto`*0.8, 'C', 'de-DE')) AS '80',\n" +
+"(SELECT FORMAT(penjualan_detail.`netto`*0.2, 'C', 'de-DE')) AS '20',(SELECT FORMAT(penjualan_detail.`netto`*0.7, 'C', 'de-DE')) AS '70',\n" +
+"(SELECT FORMAT(penjualan_detail.`netto`*0.3, 'C', 'de-DE')) AS '30',(SELECT FORMAT(penjualan_detail.`netto`*0.6, 'C', 'de-DE')) AS '60',\n" +
+"(SELECT FORMAT(penjualan_detail.`netto`*0.4, 'C', 'de-DE')) AS '40'\n" +
+"FROM penjualan_header JOIN penjualan_detail ON penjualan_header.`id`=penjualan_detail.`id` JOIN product ON penjualan_detail.`barcode`= product.`id` WHERE penjualan_header.`tanggal` BETWEEN '"+startDate+"' AND '"+endDate+"' ORDER BY penjualan_header.`tanggal` ASC;";
+            rs = st.executeQuery(sql);
+            while (rs.next()) {
+                rp.dtm = (DefaultTableModel) rp.tb_report.getModel();
+                rp.dtm.addRow(new Object[]{
+                    rs.getString(1),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getString(4),
+                    rs.getString(5),
+                    rs.getString(6),
+                    rs.getString(7),
+                    rs.getString(8),
+                    rs.getString(9),
+                    rs.getString(10),
+                    rs.getString(11)
+                });
+            }
+            rp.tb_report.setModel(rp.dtm);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    @Override
+    public void fun_TarikByProduct(view.ReportPenjualan rp) throws SQLException {
+        fun_ObjectTable(rp);
+        atur_tableBrand(rp);
+        String startDate = ((JTextField) rp.start_date.getDateEditor().getUiComponent()).getText();
+        String endDate = ((JTextField) rp.end_date.getDateEditor().getUiComponent()).getText();
+        try {
+            con = koneksi.Server.getConnection();
+            st = con.createStatement();
+            String sql
+                    = "SELECT penjualan_header.`sales` AS 'Salesman', product.`nama` AS 'Nama Produk', penjualan_detail.`qty` AS 'Total Qty',\n" +
+"(SELECT FORMAT(penjualan_detail.`netto`, 'C', 'de-DE')) AS 'netto',(SELECT FORMAT(penjualan_detail.`netto`*0.8, 'C', 'de-DE')) AS '80',\n" +
+"(SELECT FORMAT(penjualan_detail.`netto`*0.2, 'C', 'de-DE')) AS '20',(SELECT FORMAT(penjualan_detail.`netto`*0.7, 'C', 'de-DE')) AS '70',\n" +
+"(SELECT FORMAT(penjualan_detail.`netto`*0.3, 'C', 'de-DE')) AS '30',(SELECT FORMAT(penjualan_detail.`netto`*0.6, 'C', 'de-DE')) AS '60',\n" +
+"(SELECT FORMAT(penjualan_detail.`netto`*0.4, 'C', 'de-DE')) AS '40'\n" +
+"FROM penjualan_header JOIN penjualan_detail ON penjualan_header.`id`=penjualan_detail.`id` JOIN product ON penjualan_detail.`barcode`= product.`id` WHERE penjualan_header.`tanggal` BETWEEN '"+startDate+"' AND '"+endDate+"' ORDER BY penjualan_header.`sales` ASC;";
+            rs = st.executeQuery(sql);
+            while (rs.next()) {
+                rp.dtm = (DefaultTableModel) rp.tb_report.getModel();
+                rp.dtm.addRow(new Object[]{
+                    rs.getString(1),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getString(4),
+                    rs.getString(5),
+                    rs.getString(6),
+                    rs.getString(7),
+                    rs.getString(8),
+                    rs.getString(9),
+                    rs.getString(10)
+                });
+            }
+            rp.tb_report.setModel(rp.dtm);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    @Override
+    public void fun_GetSales(view.ReportPenjualan rp) throws SQLException {
+        try {
+            String query = "SELECT * FROM user WHERE jabatan='Sales' ORDER BY username ASC";
+            ps = koneksi.Server.getConnection().prepareStatement(query);
+            rs = ps.executeQuery(query);
+            rp.cb_sales.removeAllItems();
+            rp.cb_sales.addItem("Pilih");
+            while (rs.next()) {
+                rp.cb_sales.addItem(rs.getString("username"));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    
+    @Override
+    public void fun_GetSalesDtl(view.ReportPenjualan rp) throws SQLException {
+        try {
+            String query = "SELECT * FROM user WHERE jabatan='Sales' ORDER BY username ASC";
+            ps = koneksi.Server.getConnection().prepareStatement(query);
+            rs = ps.executeQuery(query);
+            rp.cb_sales.removeAllItems();
+            rp.cb_sales.addItem("Pilih");
+            while (rs.next()) {
+                rp.cb_sales.addItem(rs.getString("username"));
+            }
+            rp.cb_sales.addItem("Semua");
+        } catch (Exception e) {
+
+        }
+    }
+    
+    @Override
+    public void fun_ObjectTable(ReportPenjualan rp) {
+        Object[] Baris = {"Sales", "Nama Barang", "Total Qty", "Netto", "80%", "20%", "70%", "30%", "60%", "40%"};
+        rp.dtm = new DefaultTableModel(null, Baris);
+        rp.tb_report.setModel(rp.dtm);
+    }
+
+    public void fun_ObjectPersales(ReportPenjualan rp) {
+        Object[] Baris = {"Sales", "Nama Barang", "Total Qty", "Netto", "80%", "20%", "70%", "30%", "60%", "40%"};
+        rp.dtm = new DefaultTableModel(null, Baris);
+        rp.tb_report.setModel(rp.dtm);
+    }
+
+    @Override
+    public void fun_ObjectTableDetail(ReportPenjualan rp) {
+        Object[] Baris = {"Tanggal", "Sales", "Nama Barang", "Total Qty", "Netto", "80%", "20%", "70%", "30%", "60%", "40%"};
+        rp.dtm = new DefaultTableModel(null, Baris);
+        rp.tb_report.setModel(rp.dtm);
+    }
+
+    @Override
+    public void fun_ObjectTableDefault(ReportPenjualan rp) {
+        Object[] Baris = {"Default", "Default", "Default", "Default", "Default", "Default"};
+        rp.dtm = new DefaultTableModel(null, Baris);
+        rp.tb_report.setModel(rp.dtm);
+    }
+
+    @Override
+    public void fun_cetakSales(ReportPenjualan rp) throws SQLException {
+        int ok = JOptionPane.showConfirmDialog(null, "Jangan Berpindah Halaman Selama Proses Cetak!", "Peringatan!", JOptionPane.YES_NO_OPTION, HEIGHT, warning);
+        if (ok == 0) {
+            String startDate = ((JTextField) rp.start_date.getDateEditor().getUiComponent()).getText();
+            String endDate = ((JTextField) rp.end_date.getDateEditor().getUiComponent()).getText();
+            try {
+                String NamaFile = "src/report/penjualansales.jasper";
+                String URL = "jdbc:mysql://localhost:3306/";
+                String DB = "agendist";
+                String driver = "com.mysql.jdbc.Driver";
+                String user = "root";
+                String pass = "";
+                Class.forName("com.mysql.jdbc.Driver").newInstance();
+                Connection connect = DriverManager.getConnection(URL + DB, user, pass);
+                HashMap param = new HashMap();
+                param.put("sales", rp.cb_sales.getSelectedItem().toString());
+                param.put("tglstart", startDate);
+                param.put("tglend", endDate);
+
+                JasperPrint jPrint = JasperFillManager.fillReport(NamaFile, param, connect);
+                JasperViewer.viewReport(jPrint, false);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Gagal Cetak" + e.getMessage(), "Alert Message!", HEIGHT);
+            }
+        }
+    }
+
+    @Override
+    public void fun_cetakProduk(ReportPenjualan rp) throws SQLException {
+        int ok = JOptionPane.showConfirmDialog(null, "Jangan Berpindah Halaman Selama Proses Cetak!", "Peringatan!", JOptionPane.YES_NO_OPTION, HEIGHT, warning);
+        if (ok == 0) {
+            String startDate = ((JTextField) rp.start_date.getDateEditor().getUiComponent()).getText();
+            String endDate = ((JTextField) rp.end_date.getDateEditor().getUiComponent()).getText();
+            try {
+                String NamaFile = "src/report/penjualanproduk.jasper";
+                String URL = "jdbc:mysql://localhost:3306/";
+                String DB = "agendist";
+                String driver = "com.mysql.jdbc.Driver";
+                String user = "root";
+                String pass = "";
+                Class.forName("com.mysql.jdbc.Driver").newInstance();
+                Connection connect = DriverManager.getConnection(URL + DB, user, pass);
+                HashMap param = new HashMap();
+                param.put("tglstart", startDate);
+                param.put("tglend", endDate);
+
+                JasperPrint jPrint = JasperFillManager.fillReport(NamaFile, param, connect);
+                JasperViewer.viewReport(jPrint, false);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Gagal Cetak" + e.getMessage(), "Alert Message!", HEIGHT);
+            }
+        }
+    }
+
+    public void atur_tableSales(ReportPenjualan rp) {
+        rp.tb_report.getColumn("Sales").setMaxWidth(100);
+        rp.tb_report.getColumn("Sales").setMinWidth(50);
+        rp.tb_report.getColumn("Sales").setWidth(50);
+    }
+
+    public void atur_tableBrand(ReportPenjualan rp) {
+        rp.tb_report.getColumn("Sales").setMaxWidth(100);
+        rp.tb_report.getColumn("Sales").setMinWidth(50);
+        rp.tb_report.getColumn("Sales").setWidth(50);
+    }
+
+}
