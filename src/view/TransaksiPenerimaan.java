@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import model.mTransPenerimaan;
 import popup.PopCariPenerimaan;
-import popup.PopCariPengeluaran;
+import popup.PopCariPengeluaranBaik;
 
 /**
  *

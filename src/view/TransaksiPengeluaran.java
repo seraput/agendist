@@ -16,7 +16,8 @@ import javax.swing.table.DefaultTableModel;
 import model.mTransPenerimaan;
 import model.mTransPengeluaran;
 import popup.PopCariBarang;
-import popup.PopCariPengeluaran;
+import popup.PopCariPengeluaranBad;
+import popup.PopCariPengeluaranBaik;
 
 /**
  *
@@ -43,8 +44,15 @@ public class TransaksiPengeluaran extends javax.swing.JPanel {
     }
 
     public void itemTerpilihBarang() throws SQLException {
-        PopCariPengeluaran pcp = new PopCariPengeluaran();
+        PopCariPengeluaranBaik pcp = new PopCariPengeluaranBaik();
         pcp.tp = this;
+        id.setText(exBarcode);
+        nama.setText(exNama);
+    }
+
+    public void itemTerpilihBarangBad() throws SQLException {
+        PopCariPengeluaranBad pco = new PopCariPengeluaranBad();
+        pco.tp = this;
         id.setText(exBarcode);
         nama.setText(exNama);
     }
@@ -416,10 +424,25 @@ public class TransaksiPengeluaran extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bt_cariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_cariActionPerformed
-        PopCariPengeluaran pcp = new PopCariPengeluaran();
-        pcp.tp = this;
-        pcp.setVisible(true);
-        pcp.setResizable(false);
+        String tgl = ((JTextField) tanggal.getDateEditor().getUiComponent()).getText();
+        String jenis = cb_jenis.getSelectedItem().toString();
+        String ket = keterangan.getText();
+        if (!nodok.getText().isEmpty() && !tgl.isEmpty() && !jenis.equals("Pilih") && !ket.isEmpty()) {
+            if (jenis.equals("Rusak") || jenis.equals("Expired")) {
+                PopCariPengeluaranBad pco = new PopCariPengeluaranBad();
+                pco.tp = this;
+                pco.setVisible(true);
+                pco.setResizable(false);
+            } else {
+                PopCariPengeluaranBaik pcp = new PopCariPengeluaranBaik();
+                pcp.tp = this;
+                pcp.setVisible(true);
+                pcp.setResizable(false);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Lengkapi Data!", "Perhatian!", HEIGHT, tpm.warning);
+        }
+
     }//GEN-LAST:event_bt_cariActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

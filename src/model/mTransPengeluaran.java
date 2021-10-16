@@ -172,11 +172,11 @@ public class mTransPengeluaran implements TransPengeluaran {
     public void fun_CekStok(TransaksiPengeluaran pengeluaran) throws SQLException {
         String stokDB = "";
         try {
-            String cekStock = "select stok from product where id='" + pengeluaran.id.getText() + "'";
+            String cekStock = "select qty from produk_baik where id='" + pengeluaran.id.getText() + "'";
             Statement stat = koneksi.Server.getConnection().createStatement();
             ResultSet hasil = stat.executeQuery(cekStock);
             while (hasil.next()) {
-                stokDB = hasil.getString("stok");
+                stokDB = hasil.getString("qty");
             }
             int qtyDB = Integer.parseInt(stokDB);
             int input = Integer.parseInt(pengeluaran.qty.getText());
@@ -265,6 +265,95 @@ public class mTransPengeluaran implements TransPengeluaran {
         pengeluaran.id.setText("");
         pengeluaran.nama.setText("");
         pengeluaran.qty.setText("");
+    }
+
+    @Override
+    public void fun_CekStokBad(TransaksiPengeluaran pengeluaran) throws SQLException {
+        String stokDB = "";
+        try {
+            String cekStock = "select qty from produk_bad where id='" + pengeluaran.id.getText() + "'";
+            Statement stat = koneksi.Server.getConnection().createStatement();
+            ResultSet hasil = stat.executeQuery(cekStock);
+            while (hasil.next()) {
+                stokDB = hasil.getString("qty");
+            }
+            int qtyDB = Integer.parseInt(stokDB);
+            int input = Integer.parseInt(pengeluaran.qty.getText());
+            if (qtyDB < input) {
+                JOptionPane.showMessageDialog(null, "Stok Kurang Dari Permintaan!", "Gagal", HEIGHT, invalid);
+                pengeluaran.qty.setText("");
+                pengeluaran.qty.requestFocus();
+            } else {
+                fun_Tambah(pengeluaran);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Bermasalah Cek Stok: " + e.getMessage(), "Alert Message", HEIGHT, warning);
+        }
+    }
+
+    @Override
+    public void fun_SimpanBad(TransaksiPengeluaran pengeluaran) throws SQLException {
+        String query = "INSERT INTO `pengeluaran` (`nodok`, `tanggal`, `jam`, `jenis`, `tujuan`, `keterangan`, `total_item`, `total_qty`, `created`, `status`) VALUES (?,?,?,?,?,?,?,?,?,?)";
+        String query2 = "INSERT INTO `pengeluaran_detail`(`nodok`, `id`, `nama`, `qty`) VALUES (?,?,?,?)";
+        String tgl = ((JTextField) pengeluaran.tanggal.getDateEditor().getUiComponent()).getText();
+        String status = "Y";
+        try {
+            ps = koneksi.Server.getConnection().prepareStatement(query);
+            ps.setString(1, pengeluaran.nodok.getText().trim());
+            ps.setString(2, tgl);
+            ps.setString(3, main.txt_jam.getText().trim());
+            ps.setString(4, pengeluaran.cb_jenis.getSelectedItem().toString());
+            ps.setString(5, pengeluaran.cb_tujuan.getSelectedItem().toString());
+            ps.setString(6, pengeluaran.keterangan.getText());
+            ps.setString(7, pengeluaran.txt_item.getText());
+            ps.setString(8, pengeluaran.txt_qty.getText());
+            ps.setString(9, main.txt_username.getText().trim());
+            ps.setString(10, status);
+            ps.executeUpdate();
+            int t = pengeluaran.table.getRowCount();
+            for (int i = 0; i < t; i++) {
+                String id = pengeluaran.table.getValueAt(i, 0).toString();
+                String nama = pengeluaran.table.getValueAt(i, 1).toString();
+                String qty = pengeluaran.table.getValueAt(i, 2).toString();
+
+                PreparedStatement stat2 = koneksi.Server.getConnection().prepareStatement(query2);
+                stat2.setString(1, pengeluaran.nodok.getText());
+                stat2.setString(2, id);
+                stat2.setString(3, nama);
+                stat2.setString(4, qty);
+                stat2.executeUpdate();
+            }
+            int ok = JOptionPane.showConfirmDialog(null, "Cetak Nota Penerimaan ?", "Transaksi Selesai", JOptionPane.YES_NO_OPTION, HEIGHT, sucess);
+            if (ok == 0) {
+                try {
+                    String NamaFile = "src/report/struk.jasper";
+                    String URL = "jdbc:mysql://localhost:3306/";
+                    String DB = "agendist";
+                    String driver = "com.mysql.jdbc.Driver";
+                    String user = "root";
+                    String pass = "";
+                    Class.forName("com.mysql.jdbc.Driver").newInstance();
+                    Connection connect = DriverManager.getConnection(URL + DB, user, pass);
+                    HashMap param = new HashMap();
+                    param.put("id", pengeluaran.nodok.getText());
+
+                    JasperPrint jPrint = JasperFillManager.fillReport(NamaFile, param, connect);
+                    JasperViewer.viewReport(jPrint, false);
+                    fun_Clear(pengeluaran);
+                    fun_Disable(pengeluaran);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Gagal Cetak" + e.getMessage(), "Alert Message!", HEIGHT);
+                }
+            } else {
+                fun_Clear(pengeluaran);
+                fun_Disable(pengeluaran);
+            }
+            fun_Clear(pengeluaran);
+            fun_Disable(pengeluaran);
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Gagal Bayar " + e.getMessage(), "Alert Message!", HEIGHT);
+        }
     }
 
 }

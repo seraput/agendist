@@ -15,23 +15,26 @@ import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import view.TransaksiPengeluaran;
+import model.mTransPenjualan;
+import view.InventoryStokLainnya;
+import view.TransaksiPenjualan;
 
 /**
  *
  * @author Dell
  */
-public class PopCariPengeluaran extends javax.swing.JFrame {
+public class PopCariStokLainnya extends javax.swing.JFrame {
 
     /**
      * Creates new form PopCariBarang
      */
+    mTransPenjualan pml = new mTransPenjualan();
     PreparedStatement ps;
     ResultSet rs;
     private DefaultTableModel dtmBarang;
-    public TransaksiPengeluaran tp = null;
+    public InventoryStokLainnya inv = null;
 
-    public PopCariPengeluaran() {
+    public PopCariStokLainnya() {
         initComponents();
         TableExProduct();
     }
@@ -48,7 +51,7 @@ public class PopCariPengeluaran extends javax.swing.JFrame {
         dtmBarang = new DefaultTableModel(null, Baris);
 
         try {
-            String sql = "SELECT * FROM product order by id asc";
+            String sql = "SELECT product.`id`, product.`nama`, product.`jenis`, product.`satuan`, product.`harga_jual`, produk_baik.`qty` FROM product JOIN produk_baik ON produk_baik.`id` = product.`id` ORDER BY product.`id` ASC;";
             Statement stat = koneksi.Server.getConnection().createStatement();
             ResultSet hasil = stat.executeQuery(sql);
             while (hasil.next()) {
@@ -57,8 +60,8 @@ public class PopCariPengeluaran extends javax.swing.JFrame {
                     hasil.getString(2),
                     hasil.getString(3),
                     hasil.getString(4),
-                    hasil.getString(6),
-                    hasil.getString(7)
+                    hasil.getString(5),
+                    hasil.getString(6)
                 });
             }
             table_masterbarang.setModel(dtmBarang);
@@ -186,15 +189,15 @@ public class PopCariPengeluaran extends javax.swing.JFrame {
 
     private void table_masterbarangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_table_masterbarangMouseClicked
         int tabelEx = table_masterbarang.getSelectedRow();
-        tp.exBarcode = table_masterbarang.getValueAt(tabelEx, 0).toString();
-        tp.exNama = table_masterbarang.getValueAt(tabelEx, 1).toString();
-
+        inv.exBarcode = table_masterbarang.getValueAt(tabelEx, 0).toString();
+        inv.exNama = table_masterbarang.getValueAt(tabelEx, 1).toString();
         try {
-            tp.itemTerpilihBarang();
-            this.dispose();
+            inv.itemTerpilihBarang();
         } catch (SQLException ex) {
-            Logger.getLogger(PopCariPengeluaran.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PopCariStokLainnya.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.dispose();
+
     }//GEN-LAST:event_table_masterbarangMouseClicked
 
     private void tf_cariKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cariKeyTyped
@@ -218,7 +221,7 @@ public class PopCariPengeluaran extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see htinv://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -228,23 +231,21 @@ public class PopCariPengeluaran extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PopCariPengeluaran.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PopCariStokLainnya.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PopCariPengeluaran.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PopCariStokLainnya.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PopCariPengeluaran.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PopCariStokLainnya.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PopCariPengeluaran.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PopCariStokLainnya.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new PopCariPengeluaran().setVisible(true);
+                new PopCariStokLainnya().setVisible(true);
             }
         });
     }

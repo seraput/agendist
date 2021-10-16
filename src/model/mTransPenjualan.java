@@ -412,11 +412,11 @@ public class mTransPenjualan implements TransPenjualan {
     public void fun_CekStok(TransaksiPenjualan tp) throws SQLException {
         String stokDB = "";
         try {
-            String cekStock = "select stok from product where id='" + tp.tf_barcode.getText() + "'";
+            String cekStock = "select qty from produk_baik where id='" + tp.tf_barcode.getText() + "'";
             Statement stat = koneksi.Server.getConnection().createStatement();
             ResultSet hasil = stat.executeQuery(cekStock);
             while (hasil.next()) {
-                stokDB = hasil.getString("stok");
+                stokDB = hasil.getString("qty");
             }
             int qtyDB = Integer.parseInt(stokDB);
             int input = Integer.parseInt(tp.tf_qty.getText());
@@ -436,11 +436,11 @@ public class mTransPenjualan implements TransPenjualan {
     public void fun_AlertStok(TransaksiPenjualan tp) throws SQLException {
         String stokDB = "";
         try {
-            String cekStock = "select stok from product where id='" + tp.tf_barcode.getText() + "'";
+            String cekStock = "select qty from produk_baik where id='" + tp.tf_barcode.getText() + "'";
             Statement stat = koneksi.Server.getConnection().createStatement();
             ResultSet hasil = stat.executeQuery(cekStock);
             while (hasil.next()) {
-                stokDB = hasil.getString("stok");
+                stokDB = hasil.getString("qty");
             }
             int qtyDB = Integer.parseInt(stokDB);
             if (qtyDB < 5) {

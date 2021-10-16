@@ -5,6 +5,8 @@
  */
 package view;
 
+import com.toedter.calendar.JCalendar;
+import com.toedter.calendar.JDateChooser;
 import static java.awt.image.ImageObserver.HEIGHT;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,6 +14,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,7 +23,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import model.mReportPenjualan;
-import model.Report;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
@@ -41,7 +44,7 @@ public class ReportPenjualan extends javax.swing.JPanel {
     public ReportPenjualan() {
         initComponents();
         lpm.fun_ObjectTableDefault(this);
-
+        
     }
 
     /**
@@ -62,6 +65,19 @@ public class ReportPenjualan extends javax.swing.JPanel {
         txt_label = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         t_netto = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        empat = new javax.swing.JLabel();
+        enam = new javax.swing.JLabel();
+        tiga = new javax.swing.JLabel();
+        tujuh = new javax.swing.JLabel();
+        dua = new javax.swing.JLabel();
+        lapan = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         cb_parameter = new javax.swing.JComboBox<>();
@@ -128,7 +144,33 @@ public class ReportPenjualan extends javax.swing.JPanel {
             }
         });
 
-        t_netto.setText("jLabel7");
+        t_netto.setText("0");
+
+        jLabel7.setText("80% =");
+
+        jLabel8.setText("20% = ");
+
+        jLabel9.setText("70% =");
+
+        jLabel10.setText("30% =");
+
+        jLabel11.setText("60% =");
+
+        jLabel12.setText("40% =");
+
+        empat.setText("0");
+
+        enam.setText("0");
+
+        tiga.setText("0");
+
+        tujuh.setText("0");
+
+        dua.setText("0");
+
+        lapan.setText("0");
+
+        jLabel13.setText("Total =");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -139,15 +181,40 @@ public class ReportPenjualan extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(100, 100, 100)
-                        .addComponent(t_netto)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addGap(3, 3, 3)
                         .addComponent(txt_label)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(t_netto, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lapan, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dua, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tujuh, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tiga, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(enam, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(empat, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -162,9 +229,23 @@ public class ReportPenjualan extends javax.swing.JPanel {
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(t_netto)
-                .addGap(24, 24, 24))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(t_netto)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel9)
+                    .addComponent(jLabel10)
+                    .addComponent(jLabel11)
+                    .addComponent(jLabel12)
+                    .addComponent(empat)
+                    .addComponent(enam)
+                    .addComponent(tiga)
+                    .addComponent(tujuh)
+                    .addComponent(dua)
+                    .addComponent(lapan)
+                    .addComponent(jLabel13))
+                .addGap(29, 29, 29))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
@@ -172,7 +253,7 @@ public class ReportPenjualan extends javax.swing.JPanel {
 
         jLabel2.setText("Parameter Report");
 
-        cb_parameter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih", "Penjualan Detail", "Penjualan PerBrand", "Penjualan PerSales" }));
+        cb_parameter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih", "Penjualan PerBrand", "Penjualan PerSales" }));
         cb_parameter.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 cb_parameterItemStateChanged(evt);
@@ -226,7 +307,7 @@ public class ReportPenjualan extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(submit))
                     .addComponent(jLabel5))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(98, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -272,20 +353,20 @@ public class ReportPenjualan extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cb_parameterItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cb_parameterItemStateChanged
-        if (cb_parameter.getSelectedItem().equals("Penjualan Detail")) {
-            txt_label.setText("Detail");
-            end_date.setCalendar(null);
-            start_date.setCalendar(null);
-            try {
-                lpm.fun_GetSalesDtl(this);
-            } catch (SQLException ex) {
-                Logger.getLogger(ReportPenjualan.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            cb_sales.setEnabled(true);
-            end_date.setEnabled(true);
-            start_date.setEnabled(true);
-            submit.setEnabled(true);
-        } else if (cb_parameter.getSelectedItem().equals("Penjualan PerBrand")) {
+//        if (cb_parameter.getSelectedItem().equals("Penjualan Detail")) {
+//            txt_label.setText("Detail");
+//            end_date.setCalendar(null);
+//            start_date.setCalendar(null);
+//            try {
+//                lpm.fun_GetSalesDtl(this);
+//            } catch (SQLException ex) {
+//                Logger.getLogger(ReportPenjualan.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            cb_sales.setEnabled(true);
+//            end_date.setEnabled(true);
+//            start_date.setEnabled(true);
+//            submit.setEnabled(true);
+        if (cb_parameter.getSelectedItem().equals("Penjualan PerBrand")) {
             txt_label.setText("Per-Produk");
             end_date.setCalendar(null);
             start_date.setCalendar(null);
@@ -394,22 +475,35 @@ public class ReportPenjualan extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JComboBox<String> cb_parameter;
     public javax.swing.JComboBox<String> cb_sales;
+    public javax.swing.JLabel dua;
+    public javax.swing.JLabel empat;
+    public javax.swing.JLabel enam;
     public com.toedter.calendar.JDateChooser end_date;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    public javax.swing.JLabel lapan;
     public com.toedter.calendar.JDateChooser start_date;
     public javax.swing.JButton submit;
     public javax.swing.JLabel t_netto;
     public javax.swing.JTable tb_report;
+    public javax.swing.JLabel tiga;
+    public javax.swing.JLabel tujuh;
     private javax.swing.JLabel txt_label;
     // End of variables declaration//GEN-END:variables
 

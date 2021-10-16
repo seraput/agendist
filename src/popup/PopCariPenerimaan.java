@@ -50,7 +50,7 @@ public class PopCariPenerimaan extends javax.swing.JFrame {
         dtmBarang = new DefaultTableModel(null, Baris);
 
         try {
-            String sql = "SELECT * FROM product order by id asc";
+            String sql = "SELECT product.`id`, product.`nama`, product.`jenis`, product.`satuan`, product.`harga_jual`, produk_baik.`qty` FROM product JOIN produk_baik ON produk_baik.`id` = product.`id` ORDER BY product.`id` ASC;";
             Statement stat = koneksi.Server.getConnection().createStatement();
             ResultSet hasil = stat.executeQuery(sql);
             while (hasil.next()) {
@@ -59,8 +59,8 @@ public class PopCariPenerimaan extends javax.swing.JFrame {
                     hasil.getString(2),
                     hasil.getString(3),
                     hasil.getString(4),
-                    hasil.getString(6),
-                    hasil.getString(7)
+                    hasil.getString(5),
+                    hasil.getString(6)
                 });
             }
             table_masterbarang.setModel(dtmBarang);

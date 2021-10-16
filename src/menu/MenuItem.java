@@ -61,7 +61,7 @@ public class MenuItem extends javax.swing.JPanel {
         lbIcon = new javax.swing.JLabel();
         lbName = new javax.swing.JLabel();
 
-        setBackground(new java.awt.Color(0, 102, 153));
+        setBackground(new java.awt.Color(255, 255, 255));
         addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
                 formMouseMoved(evt);
@@ -83,28 +83,54 @@ public class MenuItem extends javax.swing.JPanel {
         });
 
         panel.setBackground(new java.awt.Color(255, 255, 255));
+        panel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                masuk(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                keluar(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                press(evt);
+            }
+        });
+
+        jSeparator1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                masuk(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                keluar(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                press(evt);
+            }
+        });
 
         lbIcon.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                entered(evt);
+                masuk(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                exit(evt);
+                keluar(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                press(evt);
             }
         });
 
         lbName.setFont(new java.awt.Font("Rockwell", 1, 12)); // NOI18N
-        lbName.setForeground(new java.awt.Color(102, 102, 102));
+        lbName.setForeground(new java.awt.Color(51, 51, 51));
         lbName.setText("Menu Name Here ...");
         lbName.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbNameMouseClicked(evt);
-            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbNameMouseEntered(evt);
+                masuk(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbNameMouseExited(evt);
+                keluar(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                press(evt);
             }
         });
 
@@ -155,6 +181,34 @@ public class MenuItem extends javax.swing.JPanel {
 
     private boolean showing = false;
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
+        
+    }//GEN-LAST:event_formMousePressed
+
+    private void formMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formMouseReleased
+
+    private void formMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseEntered
+        
+    }//GEN-LAST:event_formMouseEntered
+
+    private void formMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseExited
+        
+    }//GEN-LAST:event_formMouseExited
+
+    private void formMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseMoved
+//        panel.setBackground(new Color(255,255,255));
+    }//GEN-LAST:event_formMouseMoved
+
+    private void masuk(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_masuk
+        panel.setBackground(new Color(204,204,204));
+    }//GEN-LAST:event_masuk
+
+    private void keluar(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_keluar
+        panel.setBackground(new Color(255,255,255));
+    }//GEN-LAST:event_keluar
+
+    private void press(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_press
         panel.setBackground(new Color(204,204,204));
         if (showing) {
             hideMenu();
@@ -164,43 +218,7 @@ public class MenuItem extends javax.swing.JPanel {
         if (act != null) {
             act.actionPerformed(null);
         }
-    }//GEN-LAST:event_formMousePressed
-
-    private void formMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_formMouseReleased
-
-    private void formMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseEntered
-        panel.setBackground(new Color(204,204,204));
-    }//GEN-LAST:event_formMouseEntered
-
-    private void formMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseExited
-        panel.setBackground(new Color(255,255,255));
-    }//GEN-LAST:event_formMouseExited
-
-    private void formMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseMoved
-//        panel.setBackground(new Color(255,255,255));
-    }//GEN-LAST:event_formMouseMoved
-
-    private void lbNameMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbNameMouseEntered
-        
-    }//GEN-LAST:event_lbNameMouseEntered
-
-    private void lbNameMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbNameMouseExited
-        
-    }//GEN-LAST:event_lbNameMouseExited
-
-    private void entered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_entered
-        
-    }//GEN-LAST:event_entered
-
-    private void exit(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exit
-        
-    }//GEN-LAST:event_exit
-
-    private void lbNameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbNameMouseClicked
-        
-    }//GEN-LAST:event_lbNameMouseClicked
+    }//GEN-LAST:event_press
 
     private void showMenu() {
         new Thread(new Runnable() {

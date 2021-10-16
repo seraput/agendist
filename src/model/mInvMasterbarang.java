@@ -47,7 +47,6 @@ public class mInvMasterbarang implements InvMasterbarang {
         mp.product_nama.setText("");
         mp.product_hb.setText("");
         mp.product_hj.setText("");
-        mp.product_qty.setText("");
         mp.product_jenis.setSelectedItem("Pilih");
         mp.product_satuan.setSelectedItem("Pilih");
     }
@@ -60,7 +59,6 @@ public class mInvMasterbarang implements InvMasterbarang {
         mp.product_hb.setEnabled(false);
         mp.product_jenis.setEnabled(false);
         mp.product_satuan.setEnabled(false);
-        mp.product_qty.setEnabled(false);
         mp.bt_simpan.setEnabled(false);
         mp.bt_batal.setEnabled(false);
         mp.bt_simpan.setVisible(true);
@@ -73,7 +71,6 @@ public class mInvMasterbarang implements InvMasterbarang {
         mp.product_nama.setEnabled(true);
         mp.product_hj.setEnabled(true);
         mp.product_hb.setEnabled(true);
-        mp.product_qty.setEnabled(true);
         mp.product_jenis.setEnabled(true);
         mp.product_satuan.setEnabled(true);
         mp.bt_simpan.setEnabled(true);
@@ -93,7 +90,9 @@ public class mInvMasterbarang implements InvMasterbarang {
         try {
             con = koneksi.Server.getConnection();
             String status = "Y";
-            String query = "INSERT INTO `product` (`id`, `nama`, `jenis`, `satuan`, `harga_beli`, `harga_jual`, `stok`, `status`, `tanggal`) VALUES (?,?,?,?,?,?,?,?,?)";
+            String query = "INSERT INTO `product` (`id`, `nama`, `jenis`, `satuan`, `harga_beli`, `harga_jual`, `status`, `tanggal`) VALUES (?,?,?,?,?,?,?,?)";
+            String query2 = "INSERT INTO `produk_baik` (`id`) VALUES (?)";
+            String query3 = "INSERT INTO `produk_bad` (`id`) VALUES (?)";
             ps = con.prepareStatement(query);
 
             ps.setString(1, mp.product_id.getText());
@@ -102,13 +101,21 @@ public class mInvMasterbarang implements InvMasterbarang {
             ps.setString(4, mp.product_satuan.getSelectedItem().toString());
             ps.setString(5, mp.product_hb.getText());
             ps.setString(6, mp.product_hj.getText());
-            ps.setString(7, mp.product_qty.getText());
-            ps.setString(8, status);
-            ps.setString(9, main.txt_tanggal.getText());
+            ps.setString(7, status);
+            ps.setString(8, main.txt_tanggal.getText());
             ps.executeUpdate();
+            
+                PreparedStatement stat2 = koneksi.Server.getConnection().prepareStatement(query2);
+                stat2.setString(1, mp.product_id.getText());
+                stat2.executeUpdate();
+                PreparedStatement stat3 = koneksi.Server.getConnection().prepareStatement(query3);
+                stat3.setString(1, mp.product_id.getText());
+                stat3.executeUpdate();
 
             JOptionPane.showMessageDialog(null, "Data Tersimpan!", "Berhasil", HEIGHT, sucess);
             ps.close();
+            stat2.close();
+            stat3.close();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Ada Sedikit Masalah! " + e.getMessage().toString(), "Gagal", HEIGHT, invalid);
         } finally {
@@ -177,7 +184,6 @@ public class mInvMasterbarang implements InvMasterbarang {
             mp.product_satuan.setSelectedItem(mp.tblmodel.getValueAt(pilih, 6).toString());
             mp.product_hb.setText(mp.tblmodel.getValueAt(pilih, 3).toString());
             mp.product_hj.setText(mp.tblmodel.getValueAt(pilih, 4).toString());
-            mp.product_qty.setText(mp.tblmodel.getValueAt(pilih, 5).toString());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error, Please Try Again!");
         }
@@ -185,12 +191,12 @@ public class mInvMasterbarang implements InvMasterbarang {
 
     @Override
     public void fun_Tampil(InventoryMasterbarang mp) throws SQLException {
-        Object[] header = {"ID", "Nama", "Jenis", "Harga Beli", "Harga Jual", "Stok", "Satuan", "Last Update"};
+        Object[] header = {"ID", "Nama", "Jenis", "Harga Beli", "Harga Jual", "Satuan", "Last Update"};
         mp.tblmodel = new DefaultTableModel(null, header);
         try {
             con = koneksi.Server.getConnection();
             st = con.createStatement();
-            String sql = "select id,nama,jenis, harga_beli, harga_jual, stok, satuan, tanggal from product where status='Y' order by id asc";
+            String sql = "select id,nama,jenis, harga_beli, harga_jual, satuan, tanggal from product where status='Y' order by id asc";
             rs = st.executeQuery(sql);
             while (rs.next()) {
                 mp.tblmodel.addRow(new Object[]{
@@ -200,8 +206,7 @@ public class mInvMasterbarang implements InvMasterbarang {
                     rs.getString(4),
                     rs.getString(5),
                     rs.getString(6),
-                    rs.getString(7),
-                    rs.getString(8)
+                    rs.getString(7)
                 });
             }
             mp.table.setModel(mp.tblmodel);

@@ -19,7 +19,9 @@ public interface TransPengeluaran {
     public void fun_Delete(TransaksiPengeluaran pengeluaran);
     public void fun_GetSales(TransaksiPengeluaran pengeluaran) throws SQLException;
     public void fun_Simpan(TransaksiPengeluaran pengeluaran) throws SQLException;
+    public void fun_SimpanBad(TransaksiPengeluaran pengeluaran) throws SQLException;                                            
     public void fun_GenID(TransaksiPengeluaran pengeluaran) throws SQLException;
     public void fun_CekStok(TransaksiPengeluaran pengeluaran) throws SQLException;
+    public void fun_CekStokBad(TransaksiPengeluaran pengeluaran) throws SQLException;
     public void fun_Tambah(TransaksiPengeluaran pengeluaran) throws SQLException;
 }

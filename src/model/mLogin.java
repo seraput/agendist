@@ -14,6 +14,7 @@ import java.sql.Statement;
 import javax.swing.JOptionPane;
 import main.Main;
 import view.LoginForm;
+import view.OpnameAwal;
 
 /**
  *
@@ -24,6 +25,7 @@ public class mLogin implements LoginController {
     Connection conn;
     Statement st;
     ResultSet rs;
+    OpnameAwal oa = new OpnameAwal();
     public static String username, nama, jabatan;
 
     public static String getUsername() {
@@ -41,8 +43,8 @@ public class mLogin implements LoginController {
     @Override
     public void fun_Login(LoginForm lg) throws SQLException {
         try {
-            String user = lg.tfEmail.getText().toString();
-            String pass = lg.tfPassword.getText().toString();
+            String user = lg.tfEmail.getText();
+            String pass = lg.tfPassword.getText();
 
             String sql = "SELECT * FROM user WHERE username= '" + user + "' AND password= '" + pass + "' ";
             conn = koneksi.Server.getConnection();
@@ -56,8 +58,10 @@ public class mLogin implements LoginController {
 //                System.out.println(jabatan);
                 Main main = new Main();
                 main.show();
-                lg.dispose();
                 JOptionPane.showMessageDialog(null, "Berhasil Login");
+                lg.dispose();
+                oa.txt_item.setText(jabatan);
+                rs.close();
             } else {
                 JOptionPane.showMessageDialog(null, "User atau Password Salah");
             }

@@ -3,12 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/view/MasterBank.java</file>
-            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/menu/MenuItem.java</file>
-            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/model/mMasterDistributor.java</file>
+            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/controller/InvOpnameAwal.java</file>
+            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/model/mOpnameAwal.java</file>
+            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/view/InventoryOpname.java</file>
             <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/model/mTransPenjualan.java</file>
-            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/view/MasterDistributor.java</file>
-            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/model/mMasterBank.java</file>
+            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/controller/InvMasterbarang.java</file>
+            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/view/OpnameAwal.java</file>
             <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/main/Main.java</file>
         </group>
     </open-files>
