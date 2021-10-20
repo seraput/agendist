@@ -14,7 +14,6 @@ import java.sql.Statement;
 import javax.swing.JOptionPane;
 import main.Main;
 import view.LoginForm;
-import view.OpnameAwal;
 
 /**
  *
@@ -25,20 +24,19 @@ public class mLogin implements LoginController {
     Connection conn;
     Statement st;
     ResultSet rs;
-    OpnameAwal oa = new OpnameAwal();
-    public static String username, nama, jabatan;
+    public static String username, nama, telp, alamat, jabatan;
 
-    public static String getUsername() {
-        return username;
-    }
-
-    public static String getNama() {
-        return nama;
-    }
-
-    public static String getJabatan() {
-        return jabatan;
-    }
+//    public static String getUsername() {
+//        return username;
+//    }
+//
+//    public static String getNama() {
+//        return nama;
+//    }
+//
+//    public static String getJabatan() {
+//        return jabatan;
+//    }
 
     @Override
     public void fun_Login(LoginForm lg) throws SQLException {
@@ -55,18 +53,26 @@ public class mLogin implements LoginController {
                 username = rs.getString("username");
                 nama = rs.getString("nama");
                 jabatan = rs.getString("jabatan");
+                telp = rs.getString("telp");
+                alamat = rs.getString("alamat");
+                
+                UserSession.setsUsername(username);
+                UserSession.setsNama(nama);
+                UserSession.setsTelp(telp);
+                UserSession.setsAlamat(alamat);
+                UserSession.setsJabatan(jabatan);
 //                System.out.println(jabatan);
-                Main main = new Main();
-                main.show();
+                new Main().setVisible(true);
                 JOptionPane.showMessageDialog(null, "Berhasil Login");
                 lg.dispose();
-                oa.txt_item.setText(jabatan);
                 rs.close();
             } else {
                 JOptionPane.showMessageDialog(null, "User atau Password Salah");
+                rs.close();
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Koneksi Error" + e.getMessage());
+                rs.close();
         }
     }
 

@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import main.Main;
+import model.UserSession;
 
 /**
  *
@@ -32,14 +33,27 @@ public final class OpnameAwal extends javax.swing.JPanel {
     ImageIcon sucess = new ImageIcon(getClass().getResource("/asset/checked.png"));
     ImageIcon invalid = new ImageIcon(getClass().getResource("/asset/cancel.png"));
     ImageIcon warning = new ImageIcon(getClass().getResource("/asset/warning.png"));
+    final String level = UserSession.getsJabatan();
 
     public OpnameAwal() {
         initComponents();
+        permission();
         TableOpname();
         txt_item.setVisible(false);
     }
 
-    private void Default(){
+    private void permission() {
+        if (level.equals("Kasir") || level.equals("Sales")) {
+            simpan.setVisible(false);
+            tarik.setVisible(false);
+        } else {
+            simpan.setVisible(true);
+            status.setVisible(true);
+            tarik.setVisible(true);
+        }
+    }
+
+    private void Default() {
         nodok.setText("");
         bulan.setText("");
         tanggal.setText("");
@@ -49,7 +63,7 @@ public final class OpnameAwal extends javax.swing.JPanel {
         TableOpname();
         ((DefaultTableModel) tb_detail.getModel()).setNumRows(0);
     }
-    
+
     private void ApprovedOpname() {
         String query = "UPDATE opname SET status=? WHERE nodok=?";
         String query1 = "UPDATE opname_detail SET status=? WHERE nodok=?";
@@ -61,13 +75,13 @@ public final class OpnameAwal extends javax.swing.JPanel {
             ps.setString(1, s);
             ps.executeUpdate();
             ps.close();
-            
+
             PreparedStatement ps1 = koneksi.Server.getConnection().prepareStatement(query1);
             ps1.setString(2, nodok.getText().trim());
             ps1.setString(1, s);
             ps1.executeUpdate();
             ps1.close();
-            
+
             int t = tb_detail.getRowCount();
             for (int i = 0; i < t; i++) {
                 String no = tb_detail.getValueAt(i, 0).toString();
@@ -86,16 +100,15 @@ public final class OpnameAwal extends javax.swing.JPanel {
                 stat.setString(6, selisih);
                 stat.executeUpdate();
                 stat.close();
-                
+
             }
             Default();
             JOptionPane.showMessageDialog(null, "Tersimpan", "Berhasil", HEIGHT, sucess);
         } catch (Exception e) {
-JOptionPane.showMessageDialog(null, "Ada Sedikit Masalah! "+ e.getMessage().toString(), "Gagal", HEIGHT, invalid);
+            JOptionPane.showMessageDialog(null, "Ada Sedikit Masalah! " + e.getMessage().toString(), "Gagal", HEIGHT, invalid);
         }
     }
-    
-    
+
     private void RejectOpname() {
         String query = "UPDATE opname SET status=? WHERE nodok=?";
         String query1 = "UPDATE opname_detail SET status=? WHERE nodok=?";
@@ -106,7 +119,7 @@ JOptionPane.showMessageDialog(null, "Ada Sedikit Masalah! "+ e.getMessage().toSt
             ps.setString(1, s);
             ps.executeUpdate();
             ps.close();
-            
+
             PreparedStatement ps1 = koneksi.Server.getConnection().prepareStatement(query1);
             ps1.setString(2, nodok.getText().trim());
             ps1.setString(1, s);
@@ -115,7 +128,7 @@ JOptionPane.showMessageDialog(null, "Ada Sedikit Masalah! "+ e.getMessage().toSt
             Default();
             JOptionPane.showMessageDialog(null, "Tersimpan", "Berhasil", HEIGHT, sucess);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Ada Sedikit Masalah! "+ e.getMessage().toString(), "Gagal", HEIGHT, invalid);
+            JOptionPane.showMessageDialog(null, "Ada Sedikit Masalah! " + e.getMessage().toString(), "Gagal", HEIGHT, invalid);
         }
     }
 
@@ -132,7 +145,14 @@ JOptionPane.showMessageDialog(null, "Ada Sedikit Masalah! "+ e.getMessage().toSt
             } else if (stat.equals("A")) {
                 status.setSelectedItem("Approved");
                 status.setEnabled(false);
-            } else {
+                simpan.setEnabled(false);
+            }
+            else if (stat.equals("R")) {
+                status.setSelectedItem("Reject");
+                status.setEnabled(false);
+                simpan.setEnabled(false);
+            }
+            else {
                 status.setSelectedItem("Pilih");
                 status.setEnabled(false);
             }
@@ -422,12 +442,10 @@ JOptionPane.showMessageDialog(null, "Ada Sedikit Masalah! "+ e.getMessage().toSt
             } else if (status.getSelectedItem().equals("Reject") && i > 0) {
                 RejectOpname();
 //                JOptionPane.showMessageDialog(null, "Reject Jalan");
-            }
-            else{
+            } else {
                 JOptionPane.showMessageDialog(null, "Tentukan Aksi!");
             }
-        }
-        else {
+        } else {
             JOptionPane.showMessageDialog(null, "Gagal Memuat, Belum Ada Data");
         }
     }//GEN-LAST:event_simpanActionPerformed
@@ -435,13 +453,13 @@ JOptionPane.showMessageDialog(null, "Ada Sedikit Masalah! "+ e.getMessage().toSt
     private void statusItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_statusItemStateChanged
         if (status.getSelectedItem().equals("Waiting")) {
             simpan.setEnabled(false);
-        ((DefaultTableModel) tb_detail.getModel()).setNumRows(0);
+            ((DefaultTableModel) tb_detail.getModel()).setNumRows(0);
         } else if (status.getSelectedItem().equals("Approved") || status.getSelectedItem().equals("Reject")) {
             simpan.setEnabled(true);
-        ((DefaultTableModel) tb_detail.getModel()).setNumRows(0);
+            ((DefaultTableModel) tb_detail.getModel()).setNumRows(0);
         } else {
             simpan.setEnabled(false);
-        ((DefaultTableModel) tb_detail.getModel()).setNumRows(0);
+            ((DefaultTableModel) tb_detail.getModel()).setNumRows(0);
         }
     }//GEN-LAST:event_statusItemStateChanged
 

@@ -44,7 +44,7 @@ public class ReportPenjualan extends javax.swing.JPanel {
     public ReportPenjualan() {
         initComponents();
         lpm.fun_ObjectTableDefault(this);
-        
+
     }
 
     /**
@@ -187,7 +187,6 @@ public class ReportPenjualan extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel13)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(t_netto, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -253,7 +252,7 @@ public class ReportPenjualan extends javax.swing.JPanel {
 
         jLabel2.setText("Parameter Report");
 
-        cb_parameter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih", "Penjualan PerBrand", "Penjualan PerSales" }));
+        cb_parameter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih", "Penjualan PerSales" }));
         cb_parameter.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 cb_parameterItemStateChanged(evt);
@@ -263,7 +262,7 @@ public class ReportPenjualan extends javax.swing.JPanel {
         cb_sales.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih" }));
         cb_sales.setEnabled(false);
 
-        submit.setText("Tampilkan");
+        submit.setText("Proses");
         submit.setEnabled(false);
         submit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -307,7 +306,7 @@ public class ReportPenjualan extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(submit))
                     .addComponent(jLabel5))
-                .addContainerGap(98, Short.MAX_VALUE))
+                .addContainerGap(112, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -353,28 +352,8 @@ public class ReportPenjualan extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cb_parameterItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cb_parameterItemStateChanged
-//        if (cb_parameter.getSelectedItem().equals("Penjualan Detail")) {
-//            txt_label.setText("Detail");
-//            end_date.setCalendar(null);
-//            start_date.setCalendar(null);
-//            try {
-//                lpm.fun_GetSalesDtl(this);
-//            } catch (SQLException ex) {
-//                Logger.getLogger(ReportPenjualan.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//            cb_sales.setEnabled(true);
-//            end_date.setEnabled(true);
-//            start_date.setEnabled(true);
-//            submit.setEnabled(true);
-        if (cb_parameter.getSelectedItem().equals("Penjualan PerBrand")) {
-            txt_label.setText("Per-Produk");
-            end_date.setCalendar(null);
-            start_date.setCalendar(null);
-            cb_sales.setEnabled(false);
-            end_date.setEnabled(true);
-            start_date.setEnabled(true);
-            submit.setEnabled(true);
-        } else if (cb_parameter.getSelectedItem().equals("Penjualan PerSales")) {
+
+        if (cb_parameter.getSelectedItem().equals("Penjualan PerSales")) {
             txt_label.setText("Per-Sales");
             end_date.setCalendar(null);
             start_date.setCalendar(null);
@@ -387,6 +366,22 @@ public class ReportPenjualan extends javax.swing.JPanel {
             end_date.setEnabled(true);
             start_date.setEnabled(true);
             submit.setEnabled(true);
+
+            ((DefaultTableModel) tb_report.getModel()).setNumRows(0);
+        } else if (cb_parameter.getSelectedItem().equals("Penjualan Detail PerSales")) {
+            txt_label.setText("Detail Per-Sales");
+            end_date.setCalendar(null);
+            start_date.setCalendar(null);
+            try {
+                lpm.fun_GetSales(this);
+            } catch (SQLException ex) {
+                Logger.getLogger(ReportPenjualan.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            cb_sales.setEnabled(true);
+            end_date.setEnabled(true);
+            start_date.setEnabled(true);
+            submit.setEnabled(true);
+            ((DefaultTableModel) tb_report.getModel()).setNumRows(0);
         } else {
             txt_label.setText("Default");
             lpm.fun_ObjectTableDefault(this);
@@ -396,6 +391,7 @@ public class ReportPenjualan extends javax.swing.JPanel {
             end_date.setEnabled(false);
             start_date.setEnabled(false);
             submit.setEnabled(false);
+            ((DefaultTableModel) tb_report.getModel()).setNumRows(0);
         }
     }//GEN-LAST:event_cb_parameterItemStateChanged
 
@@ -420,17 +416,17 @@ public class ReportPenjualan extends javax.swing.JPanel {
                     }
                 }
             }
-        } else if (cb_parameter.getSelectedItem().equals("Penjualan PerBrand")) {
+        } else if (cb_parameter.getSelectedItem().equals("Penjualan Detail PerSales")) {
             String startDate = ((JTextField) start_date.getDateEditor().getUiComponent()).getText();
             String endDate = ((JTextField) end_date.getDateEditor().getUiComponent()).getText();
-            if (!startDate.equals("") && !endDate.equals("")) {
+            if (!startDate.equals("") && !endDate.equals("") && !cb_sales.getSelectedItem().equals("Pilih")) {
                 try {
-                    lpm.fun_TarikByProduct(this);
+                    lpm.fun_TarikDetail(this);
                 } catch (SQLException ex) {
                     Logger.getLogger(ReportPenjualan.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "Start atau End Date Kosong!", "Gagal", HEIGHT, lpm.invalid);
+                JOptionPane.showMessageDialog(null, "Parameter Start, End Date atau Sales Kosong!", "Gagal", HEIGHT, lpm.invalid);
             }
         } else if (cb_parameter.getSelectedItem().equals("Penjualan PerSales")) {
             String startDate = ((JTextField) start_date.getDateEditor().getUiComponent()).getText();
@@ -448,22 +444,24 @@ public class ReportPenjualan extends javax.swing.JPanel {
     }//GEN-LAST:event_submitActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (txt_label.getText().equals("Detail")) {
-            JOptionPane.showMessageDialog(null, "Nothing!", "Gagal", HEIGHT, lpm.invalid);
-        } else if (txt_label.getText().equals("Per-Produk")) {
-            try {
-                lpm.fun_cetakProduk(this);
-            } catch (SQLException ex) {
-                Logger.getLogger(ReportPenjualan.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else if (txt_label.getText().equals("Per-Sales")) {
-            try {
-                lpm.fun_cetakSales(this);
-            } catch (SQLException ex) {
-                Logger.getLogger(ReportPenjualan.class.getName()).log(Level.SEVERE, null, ex);
+        String startDate = ((JTextField) start_date.getDateEditor().getUiComponent()).getText();
+        String endDate = ((JTextField) end_date.getDateEditor().getUiComponent()).getText();
+        if (!txt_label.getText().equals("Pilih") && !cb_sales.getSelectedItem().equals("Pilih") && !startDate.isEmpty() && !endDate.isEmpty()) {
+            if (txt_label.getText().equals("Per-Sales")) {
+                try {
+                    lpm.fun_cetakSales(this);
+                } catch (SQLException ex) {
+                    Logger.getLogger(ReportPenjualan.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else if (txt_label.getText().equals("Detail Per-Sales")) {
+                try {
+                    lpm.fun_cetakSales(this);
+                } catch (SQLException ex) {
+                    Logger.getLogger(ReportPenjualan.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Nothing!", "Gagal", HEIGHT, lpm.invalid);
+            JOptionPane.showMessageDialog(null, "Parameter Kosong!", "Gagal", HEIGHT, lpm.invalid);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

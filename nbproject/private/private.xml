@@ -3,13 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/controller/InvOpnameAwal.java</file>
-            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/model/mOpnameAwal.java</file>
-            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/view/InventoryOpname.java</file>
-            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/model/mTransPenjualan.java</file>
-            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/controller/InvMasterbarang.java</file>
-            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/view/OpnameAwal.java</file>
-            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/main/Main.java</file>
+            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/popup/PopCariPengeluaranBaik.java</file>
+            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/controller/TransPengeluaran.java</file>
+            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/view/TransaksiPengeluaran.java</file>
+            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/model/mTransPengeluaran.java</file>
+            <file>file:/C:/Users/Dell/Documents/NetBeansProjects/AgenApp/src/popup/PopCariPengeluaranBad.java</file>
         </group>
     </open-files>
 </project-private>

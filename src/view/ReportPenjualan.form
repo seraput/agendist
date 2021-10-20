@@ -116,7 +116,6 @@
                           <Component id="jButton1" min="-2" pref="75" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="t_netto" min="-2" pref="80" max="-2" attributes="0"/>
@@ -374,7 +373,7 @@
                       </Group>
                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="98" max="32767" attributes="0"/>
+                  <EmptySpace pref="112" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -410,10 +409,9 @@
         <Component class="javax.swing.JComboBox" name="cb_parameter">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="3">
+              <StringArray count="2">
                 <StringItem index="0" value="Pilih"/>
-                <StringItem index="1" value="Penjualan PerBrand"/>
-                <StringItem index="2" value="Penjualan PerSales"/>
+                <StringItem index="1" value="Penjualan PerSales"/>
               </StringArray>
             </Property>
           </Properties>
@@ -441,7 +439,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="submit">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Tampilkan"/>
+            <Property name="text" type="java.lang.String" value="Proses"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>

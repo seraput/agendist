@@ -16,7 +16,7 @@ public interface TransPenerimaan {
     public void fun_Clear(TransaksiPenerimaan penerimaan);
     public void fun_Enabled(TransaksiPenerimaan penerimaan);
     public void fun_Disable(TransaksiPenerimaan penerimaan);
-    public void fun_Delete(TransaksiPenerimaan penerimaan);
+    public void fun_Delete(TransaksiPenerimaan penerimaan)throws SQLException;
     public void fun_GetDist(TransaksiPenerimaan penerimaan) throws SQLException;
     public void fun_Simpan(TransaksiPenerimaan penerimaan) throws SQLException;
     public void fun_GenID(TransaksiPenerimaan penerimaan) throws SQLException;

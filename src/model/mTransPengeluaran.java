@@ -294,7 +294,7 @@ public class mTransPengeluaran implements TransPengeluaran {
     @Override
     public void fun_SimpanBad(TransaksiPengeluaran pengeluaran) throws SQLException {
         String query = "INSERT INTO `pengeluaran` (`nodok`, `tanggal`, `jam`, `jenis`, `tujuan`, `keterangan`, `total_item`, `total_qty`, `created`, `status`) VALUES (?,?,?,?,?,?,?,?,?,?)";
-        String query2 = "INSERT INTO `pengeluaran_detail`(`nodok`, `id`, `nama`, `qty`) VALUES (?,?,?,?)";
+        String query2 = "INSERT INTO `pengeluaran_bad`(`nodok`, `id`, `nama`, `qty`) VALUES (?,?,?,?)";
         String tgl = ((JTextField) pengeluaran.tanggal.getDateEditor().getUiComponent()).getText();
         String status = "Y";
         try {

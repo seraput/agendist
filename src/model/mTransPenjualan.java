@@ -62,6 +62,7 @@ public class mTransPenjualan implements TransPenjualan {
     public void fun_Clear(TransaksiPenjualan tp) {
         tp.tf_barcode.setText("");
         tp.tf_nama.setText("");
+        tp.pembeli.setText("");
         tp.tf_harga.setText("");
         tp.tf_qty.setText("");
         tp.tf_nominal.setText("");
@@ -108,24 +109,26 @@ public class mTransPenjualan implements TransPenjualan {
         String hartot = tp.harga_total;
         String kembali = tp.kembalian;
         String nominal = tp.nominal_bayar;
+        String date = main.txt_tanggal.getText();
 
-        String query = "INSERT INTO `penjualan_header`(`id`, `sales`, `tanggal`, `jam`, `total_barang`, `total_qty`, `total_harga`, `pembayaran`, `bank`, `nomor`, `nominal`, `kembali`, `created`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String query = "INSERT INTO `penjualan_header`(`id`, `sales`, `pembeli`, `tanggal`, `jam`, `total_barang`, `total_qty`, `total_harga`, `pembayaran`, `bank`, `nomor`, `nominal`, `kembali`, `created`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         String query2 = "INSERT INTO `penjualan_detail`(`id`, `barcode`, `nama`, `harga`, `qty`, `netto`) VALUES (?,?,?,?,?,?)";
         try {
             ps = koneksi.Server.getConnection().prepareStatement(query);
             ps.setString(1, tp.tf_idTrans.getText().trim());
             ps.setString(2, tp.cb_sales.getSelectedItem().toString());
-            ps.setString(3, main.txt_tanggal.getText().trim());
-            ps.setString(4, main.txt_jam.getText().trim());
-            ps.setString(5, tp.txt_item.getText());
-            ps.setString(6, tp.txt_qty.getText());
-            ps.setString(7, hartot);
-            ps.setString(8, tp.cb_tipe.getSelectedItem().toString());
-            ps.setString(9, tp.cb_kartu.getSelectedItem().toString());
-            ps.setString(10, tp.tf_nomor.getText());
-            ps.setString(11, nominal);
-            ps.setString(12, kembali);
-            ps.setString(13, main.txt_username.getText().trim());
+            ps.setString(3, tp.pembeli.getText().trim());
+            ps.setString(4, date);
+            ps.setString(5, main.txt_jam.getText().trim());
+            ps.setString(6, tp.txt_item.getText());
+            ps.setString(7, tp.txt_qty.getText());
+            ps.setString(8, hartot);
+            ps.setString(9, tp.cb_tipe.getSelectedItem().toString());
+            ps.setString(10, tp.cb_kartu.getSelectedItem().toString());
+            ps.setString(11, tp.tf_nomor.getText());
+            ps.setString(12, nominal);
+            ps.setString(13, kembali);
+            ps.setString(14, main.txt_username.getText().trim());
             ps.executeUpdate();
 
             int t = tp.table_penjualan.getRowCount();
@@ -149,7 +152,7 @@ public class mTransPenjualan implements TransPenjualan {
             int ok = JOptionPane.showConfirmDialog(null, "Cetak Struk Pembelian ?", "Transaksi Selesai", JOptionPane.YES_NO_OPTION, HEIGHT, sucess);
             if (ok == 0) {
                 try {
-                    String NamaFile = "src/report/struk.jasper";
+                    String NamaFile = "src/report/nota.jasper";
                     String URL = "jdbc:mysql://localhost:3306/";
                     String DB = "agendist";
                     String driver = "com.mysql.jdbc.Driver";
@@ -183,18 +186,35 @@ public class mTransPenjualan implements TransPenjualan {
     public void fun_Delete(TransaksiPenjualan tp) {
         DefaultTableModel model = (DefaultTableModel) tp.table_penjualan.getModel();
         int row = tp.table_penjualan.getSelectedRow();
+
         if (row >= 0) {
             int ok = JOptionPane.showConfirmDialog(null, "Yakin Mau Hapus?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
             if (ok == 0) {
-                model.removeRow(row);
+                try {
+                    int pilih = tp.table_penjualan.getSelectedRow();
+                    String bar = "";
+                    bar = (tp.tblmodel.getValueAt(pilih, 1).toString());
+                    con = koneksi.Server.getConnection();
+                    String query = "DELETE FROM mutasi_stok WHERE notrans=? and id=?";
+                    ps = con.prepareStatement(query);
 
-                int rows = model.getRowCount();
-                tp.txt_item.setText("" + rows);
-                
-                fun_Total(tp);
-                tp.min.setEnabled(false);
-            }
-            else{
+                    ps.setString(1, tp.tf_idTrans.getText());
+                    ps.setString(2, bar);
+                    ps.executeUpdate();
+
+                    JOptionPane.showMessageDialog(null, "Data Terhapus!", "Berhasil", HEIGHT, sucess);
+                    ps.close();
+                    model.removeRow(row);
+                    int rows = model.getRowCount();
+                    tp.txt_item.setText("" + rows);
+
+                    fun_Total(tp);
+                    tp.min.setEnabled(false);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Ada Sedikit Masalah! " + e.getMessage(), "Gagal", HEIGHT, invalid);
+                }
+
+            } else {
                 tp.tf_barcode.requestFocus();
                 tp.min.setEnabled(false);
             }
@@ -237,34 +257,46 @@ public class mTransPenjualan implements TransPenjualan {
         if (row >= 0) {
             int ok = JOptionPane.showConfirmDialog(null, "Apa Mau Merubah Data?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
             if (ok == 0) {
-                
+
                 try {
                     fun_Table(tp);
                 } catch (SQLException ex) {
                     Logger.getLogger(mTransPenjualan.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                model.removeRow(row);
 
-                int rows = model.getRowCount();
-                tp.txt_item.setText("" + rows);
+                try {
+                    con = koneksi.Server.getConnection();
+                    String query = "DELETE FROM mutasi_stok WHERE notrans=? and id=?";
+                    ps = con.prepareStatement(query);
 
-                int total = 0;
-                for (int i = 0; i < tp.table_penjualan.getRowCount(); i++) {
-                    int amount = Integer.parseInt((String) tp.table_penjualan.getValueAt(i, 4));
-                    total += amount;
+                    ps.setString(1, tp.tf_idTrans.getText());
+                    ps.setString(2, tp.tf_barcode.getText());
+                    ps.executeUpdate();
+
+                    model.removeRow(row);
+                    int rows = model.getRowCount();
+                    tp.txt_item.setText("" + rows);
+
+                    int total = 0;
+                    for (int i = 0; i < tp.table_penjualan.getRowCount(); i++) {
+                        int amount = Integer.parseInt((String) tp.table_penjualan.getValueAt(i, 4));
+                        total += amount;
+                    }
+                    tp.txt_qty.setText("" + total);
+
+                    int harga = 0;
+                    int jumlah = 0;
+                    for (int i = 0; i < tp.table_penjualan.getRowCount(); i++) {
+                        int amount1 = Integer.parseInt((String) tp.table_penjualan.getValueAt(i, 3));
+                        harga += amount1;
+                        int sum = harga * total;
+                        jumlah += sum;
+                        tp.tf_qty.requestFocus();
+                    }
+                    tp.txt_totalharga.setText("" + jumlah);
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Error!", "Gagal", HEIGHT, warning);
                 }
-                tp.txt_qty.setText("" + total);
-
-                int harga = 0;
-                int jumlah = 0;
-                for (int i = 0; i < tp.table_penjualan.getRowCount(); i++) {
-                    int amount1 = Integer.parseInt((String) tp.table_penjualan.getValueAt(i, 3));
-                    harga += amount1;
-                    int sum = harga * total;
-                    jumlah += sum;
-                    tp.tf_qty.requestFocus();
-                }
-                tp.txt_totalharga.setText("" + jumlah);
             } else {
                 tp.tf_barcode.setText("");
                 tp.tf_nama.setText("");
@@ -388,7 +420,7 @@ public class mTransPenjualan implements TransPenjualan {
             total += amount;
         }
         tp.txt_qty.setText("" + total);
-        
+
         //total
         int harga = 0;
         for (int i = 0; i < tp.table_penjualan.getRowCount(); i++) {
@@ -411,20 +443,33 @@ public class mTransPenjualan implements TransPenjualan {
     @Override
     public void fun_CekStok(TransaksiPenjualan tp) throws SQLException {
         String stokDB = "";
+        int input = Integer.parseInt(tp.tf_qty.getText());
         try {
             String cekStock = "select qty from produk_baik where id='" + tp.tf_barcode.getText() + "'";
+            String query3 = "INSERT INTO `mutasi_stok`(`notrans`, `tanggal`, `nama`, `id`, `stok`, `qty`, `sisa`, `keterangan`) VALUES (?,?,?,?,?,?,?,?)";
             Statement stat = koneksi.Server.getConnection().createStatement();
             ResultSet hasil = stat.executeQuery(cekStock);
+            String ket = "Keluar";
             while (hasil.next()) {
                 stokDB = hasil.getString("qty");
             }
             int qtyDB = Integer.parseInt(stokDB);
-            int input = Integer.parseInt(tp.tf_qty.getText());
+            int h = qtyDB - input;
             if (qtyDB < input) {
                 JOptionPane.showMessageDialog(null, "Stok Kurang Dari Permintaan!", "Gagal", HEIGHT, invalid);
                 tp.tf_qty.setText("");
                 tp.tf_qty.requestFocus();
             } else {
+                ps = koneksi.Server.getConnection().prepareStatement(query3);
+                ps.setString(1, tp.tf_idTrans.getText().trim());
+                ps.setString(2, main.txt_tanggal.getText());
+                ps.setString(3, tp.pembeli.getText());
+                ps.setString(4, tp.tf_barcode.getText());
+                ps.setString(5, stokDB);
+                ps.setString(6, String.valueOf(input));
+                ps.setString(7, String.valueOf(h));
+                ps.setString(8, ket);
+                ps.executeUpdate();
                 fun_Tambah(tp);
             }
         } catch (Exception e) {

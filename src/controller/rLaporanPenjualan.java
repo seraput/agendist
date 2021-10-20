@@ -12,7 +12,7 @@ import view.ReportPenjualan;
  *
  * @author Dell
  */
-public interface RepPenjualanController {
+public interface rLaporanPenjualan {
     public void fun_Clear(ReportPenjualan rp);
     public void fun_TarikBySales(ReportPenjualan rp) throws SQLException;
     public void fun_TarikDetail(ReportPenjualan rp) throws SQLException;

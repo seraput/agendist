@@ -6,6 +6,8 @@
 package view;
 
 import java.awt.event.KeyEvent;
+import static java.awt.image.ImageObserver.HEIGHT;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,14 +27,14 @@ public class TransaksiPenerimaan extends javax.swing.JPanel {
     mTransPenerimaan tpm = new mTransPenerimaan();
     public String exBarcode, exNama;
     public DefaultTableModel tblmodel;
+
     /**
      * Creates new form TransaksiPenerimaan
      */
     public TransaksiPenerimaan() {
         initComponents();
     }
-    
-    
+
     public void FilterAngka(KeyEvent b) {
         if (Character.isAlphabetic(b.getKeyChar())) {
             b.consume();
@@ -417,21 +419,37 @@ public class TransaksiPenerimaan extends javax.swing.JPanel {
         String jenis = cb_tujuan.getSelectedItem().toString();
         String ket = keterangan.getText();
         int row = Integer.parseInt(txt_item.getText());
-        if(!no.isEmpty() && !tgl.isEmpty() && !jenis.equals("Pilih") && !ket.isEmpty() && row > 0){
+        if (!no.isEmpty() && !tgl.isEmpty() && !jenis.equals("Pilih") && !ket.isEmpty() && row > 0) {
             try {
                 tpm.fun_Simpan(this);
             } catch (SQLException ex) {
                 Logger.getLogger(TransaksiPenerimaan.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-        else{
+        } else {
             JOptionPane.showMessageDialog(null, "Data Belum Lengkap!", "Perhatian!", HEIGHT, tpm.warning);
         }
     }//GEN-LAST:event_bt_simpanActionPerformed
 
     private void bt_batalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_batalActionPerformed
-        tpm.fun_Disable(this);
-        tpm.fun_Clear(this);
+        int ok = JOptionPane.showConfirmDialog(null, "Yakin Mau Membatalkan?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+        if (ok == 0) {
+            String query = "DELETE FROM mutasi_stok WHERE notrans=? and id=?";
+            try {
+                int t = table.getRowCount();
+                for (int i = 0; i < t; i++) {
+                    String barcode = table.getValueAt(i, 0).toString();
+                    PreparedStatement stat2 = koneksi.Server.getConnection().prepareStatement(query);
+                    stat2.setString(1, nodok.getText());
+                    stat2.setString(2, barcode);
+                    stat2.executeUpdate();
+                }
+                JOptionPane.showMessageDialog(null, "Data Sudah Dibersihkan!", "Berhasil", HEIGHT, tpm.trash);
+                tpm.fun_Clear(this);
+                tpm.fun_Disable(this);
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Ada Sedikit Masalah! " + ex.getMessage(), "Gagal", HEIGHT, tpm.invalid);
+            }
+        }
     }//GEN-LAST:event_bt_batalActionPerformed
 
     private void bt_cariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_cariActionPerformed
@@ -455,7 +473,7 @@ public class TransaksiPenerimaan extends javax.swing.JPanel {
                     qty.setText("");
                 } else {
                     try {
-                        tpm.fun_Tambah(this);
+                        tpm.fun_CekStok(this);
                     } catch (SQLException ex) {
                         Logger.getLogger(TransaksiPenerimaan.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -478,7 +496,7 @@ public class TransaksiPenerimaan extends javax.swing.JPanel {
             } else {
 
                 try {
-                    tpm.fun_Tambah(this);
+                    tpm.fun_CekStok(this);
                 } catch (SQLException ex) {
                     Logger.getLogger(TransaksiPenerimaan.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -487,7 +505,11 @@ public class TransaksiPenerimaan extends javax.swing.JPanel {
     }//GEN-LAST:event_bt_tambahActionPerformed
 
     private void bt_minActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_minActionPerformed
-        tpm.fun_Delete(this);
+        try {
+            tpm.fun_Delete(this);
+        } catch (SQLException ex) {
+            Logger.getLogger(TransaksiPenerimaan.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_bt_minActionPerformed
 
 

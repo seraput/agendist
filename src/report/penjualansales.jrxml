@@ -47,6 +47,30 @@ WHERE penjualan_header.`sales`=$P{sales} AND penjualan_header.`tanggal` BETWEEN 
 	<variable name="empat" class="java.lang.Integer">
 		<variableExpression><![CDATA[$F{netto}*0.4]]></variableExpression>
 	</variable>
+	<variable name="sum_qty" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{qty}]]></variableExpression>
+	</variable>
+	<variable name="sum_netto" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{netto}]]></variableExpression>
+	</variable>
+	<variable name="sum_80" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{netto}*0.8]]></variableExpression>
+	</variable>
+	<variable name="sum_20" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{netto}*0.2]]></variableExpression>
+	</variable>
+	<variable name="sum_70" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{netto}*0.7]]></variableExpression>
+	</variable>
+	<variable name="sum_30" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{netto}*0.3]]></variableExpression>
+	</variable>
+	<variable name="sum_60" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{netto}*0.6]]></variableExpression>
+	</variable>
+	<variable name="sum_40" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{netto}*0.4]]></variableExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -155,7 +179,7 @@ WHERE penjualan_header.`sales`=$P{sales} AND penjualan_header.`tanggal` BETWEEN 
 				<text><![CDATA[Total Harga]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="448" y="47" width="51" height="20" uuid="29dad284-e14b-40d7-8370-e35c290848c9"/>
+				<reportElement x="438" y="47" width="51" height="20" uuid="29dad284-e14b-40d7-8370-e35c290848c9"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
@@ -172,28 +196,28 @@ WHERE penjualan_header.`sales`=$P{sales} AND penjualan_header.`tanggal` BETWEEN 
 				<text><![CDATA[20%]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="625" y="47" width="51" height="20" uuid="ea88c031-bba9-4758-9259-a5d16aba3d4c"/>
+				<reportElement x="629" y="47" width="51" height="20" uuid="ea88c031-bba9-4758-9259-a5d16aba3d4c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[30%]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="572" y="47" width="51" height="20" uuid="2337b66a-f4ca-4159-9d43-726befe1db3b"/>
+				<reportElement x="567" y="47" width="51" height="20" uuid="2337b66a-f4ca-4159-9d43-726befe1db3b"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[70%]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="698" y="47" width="51" height="20" uuid="46471162-2c8d-43e8-a2e8-2d61e6b6aa33"/>
+				<reportElement x="693" y="47" width="51" height="20" uuid="46471162-2c8d-43e8-a2e8-2d61e6b6aa33"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[60%]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="751" y="47" width="51" height="20" uuid="53707a91-b088-452a-905a-0efd7588b15e"/>
+				<reportElement x="757" y="47" width="45" height="20" uuid="53707a91-b088-452a-905a-0efd7588b15e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
@@ -226,7 +250,7 @@ WHERE penjualan_header.`sales`=$P{sales} AND penjualan_header.`tanggal` BETWEEN 
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="38" splitType="Stretch">
+		<band height="34" splitType="Stretch">
 			<textField>
 				<reportElement x="3" y="6" width="54" height="20" uuid="412901d0-43b4-49e7-b70c-9a814c7e2a5b"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -262,7 +286,7 @@ WHERE penjualan_header.`sales`=$P{sales} AND penjualan_header.`tanggal` BETWEEN 
 				</graphicElement>
 			</line>
 			<textField pattern="#,##0;#,##0-">
-				<reportElement x="448" y="6" width="51" height="20" uuid="eb090880-a1ab-477d-990b-987ede96a68d"/>
+				<reportElement x="438" y="6" width="51" height="20" uuid="eb090880-a1ab-477d-990b-987ede96a68d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
@@ -276,28 +300,28 @@ WHERE penjualan_header.`sales`=$P{sales} AND penjualan_header.`tanggal` BETWEEN 
 				<textFieldExpression><![CDATA[$V{dua}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0;#,##0-">
-				<reportElement x="572" y="6" width="51" height="20" uuid="ca486063-fe4d-4f68-b36c-aaf8ed72ac44"/>
+				<reportElement x="567" y="6" width="51" height="20" uuid="ca486063-fe4d-4f68-b36c-aaf8ed72ac44"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{tujuh}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0;#,##0-">
-				<reportElement x="625" y="6" width="51" height="20" uuid="e4cf38c1-f611-4b44-a52b-3267f7053877"/>
+				<reportElement x="629" y="6" width="51" height="20" uuid="e4cf38c1-f611-4b44-a52b-3267f7053877"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{tiga}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0;#,##0-">
-				<reportElement x="698" y="6" width="51" height="20" uuid="3fe23d2b-acab-4f03-80b4-972032432b29"/>
+				<reportElement x="693" y="6" width="51" height="20" uuid="3fe23d2b-acab-4f03-80b4-972032432b29"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{enam}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0;#,##0-">
-				<reportElement x="751" y="6" width="51" height="20" uuid="596fe0dc-449b-4991-85cf-c0a471003542"/>
+				<reportElement x="757" y="6" width="45" height="20" uuid="596fe0dc-449b-4991-85cf-c0a471003542"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
@@ -341,4 +365,92 @@ WHERE penjualan_header.`sales`=$P{sales} AND penjualan_header.`tanggal` BETWEEN 
 			</line>
 		</band>
 	</detail>
+	<columnFooter>
+		<band height="24">
+			<staticText>
+				<reportElement x="163" y="0" width="61" height="20" uuid="19860670-326c-4fb8-8b74-6df40eb1c605"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField pattern="#,##0;#,##0-">
+				<reportElement x="439" y="4" width="50" height="16" uuid="0b3c29f5-9f6c-480d-975c-81fdc3d14a31"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum_80}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;#,##0-">
+				<reportElement x="292" y="0" width="110" height="20" uuid="b5281a38-890f-45cd-971d-700c868d56d1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum_netto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;#,##0-">
+				<reportElement x="230" y="0" width="54" height="20" uuid="a222d16e-2074-48b4-b26e-84efbc81e5e8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum_qty}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="23" width="802" height="1" uuid="cc70ce1c-30cc-40e3-9fe4-af6cf529aee7"/>
+			</line>
+			<line>
+				<reportElement x="287" y="0" width="1" height="20" uuid="6576bda4-f96f-4d56-b8b8-769591aa3197"/>
+			</line>
+			<line>
+				<reportElement x="561" y="3" width="1" height="17" uuid="875b7df5-3c42-4194-9dce-d2dbd4d9bb6a"/>
+			</line>
+			<line>
+				<reportElement x="685" y="3" width="1" height="17" uuid="934dc0ee-71ff-4897-ba2f-62405f982b98"/>
+			</line>
+			<line>
+				<reportElement x="227" y="2" width="1" height="18" uuid="6903b1c4-9110-4b92-8bc6-ed67c6d499d9"/>
+			</line>
+			<line>
+				<reportElement x="422" y="0" width="1" height="20" uuid="925ead94-507e-4713-89e9-a8549412741a"/>
+			</line>
+			<line>
+				<reportElement x="0" y="1" width="802" height="1" uuid="361e76a7-28fc-4135-b9b0-c035186c76f4"/>
+			</line>
+			<textField pattern="#,##0;#,##0-">
+				<reportElement x="501" y="4" width="51" height="16" uuid="68b102d0-abe6-4046-9257-ae921ee2eecc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum_20}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;#,##0-">
+				<reportElement x="567" y="3" width="51" height="17" uuid="e5cf7c15-b040-495a-8ff1-deb7592cb5ce"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum_70}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;#,##0-">
+				<reportElement x="629" y="4" width="51" height="16" uuid="7c750e89-e705-42b3-9dc9-dbc6e147a827"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum_30}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;#,##0-">
+				<reportElement x="693" y="4" width="51" height="16" uuid="b84351ac-92b4-4fd2-969b-806be946dedf"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum_60}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;#,##0-">
+				<reportElement x="757" y="4" width="45" height="16" uuid="a12dd03f-c0d6-4f48-8f71-4f54af281385"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum_40}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
 </jasperReport>

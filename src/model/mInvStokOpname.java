@@ -37,7 +37,10 @@ public class mInvStokOpname implements InvStokOpname{
     protected PreparedStatement ps;
     protected ResultSet rs;
     protected Statement st;
-    Main main = new Main();
+    public Main m = new Main();
+    final String tgl = m.txt_tanggal.getText();
+    final String jam = m.txt_jam.getText();
+    final String username = UserSession.getsUsername();
     public ImageIcon sucess = new ImageIcon(getClass().getResource("/asset/checked.png"));
     public ImageIcon invalid = new ImageIcon(getClass().getResource("/asset/cancel.png"));
     public ImageIcon warning = new ImageIcon(getClass().getResource("/asset/warning.png"));
@@ -64,9 +67,9 @@ public class mInvStokOpname implements InvStokOpname{
             ps.setString(2, ot.bulan.getSelectedItem().toString());
             ps.setString(3, String.valueOf(tahun));
             ps.setString(4, ot.txt_item.getText());
-            ps.setString(5, main.txt_username.getText().trim());
-            ps.setString(6, main.txt_tanggal.getText());
-            ps.setString(7, main.txt_jam.getText().trim());
+            ps.setString(5, username);
+            ps.setString(6, m.txt_tanggal.getText());
+            ps.setString(7, m.txt_jam.getText());
             ps.setString(8, status1);
             ps.executeUpdate();
             ps.close();
@@ -96,6 +99,7 @@ public class mInvStokOpname implements InvStokOpname{
             JOptionPane.showMessageDialog(null, "Gagal Menyimpan " + e.getMessage(), "Alert Message!", HEIGHT);
         }
     }
+    
 
     @Override
     public void fun_Delete(OpnameTambah ot) {

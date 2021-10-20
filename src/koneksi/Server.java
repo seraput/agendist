@@ -17,7 +17,7 @@ public class Server {
         java.sql.Connection conn = null;
         try{
             Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/agendist", "root", "");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/agendist", "exroot", "agendist123");
         }catch(Exception e){
             System.out.println(e.getMessage());
         }

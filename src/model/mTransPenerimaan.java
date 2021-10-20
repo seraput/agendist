@@ -40,6 +40,7 @@ public class mTransPenerimaan implements TransPenerimaan {
     public ImageIcon sucess = new ImageIcon(getClass().getResource("/asset/checked.png"));
     public ImageIcon invalid = new ImageIcon(getClass().getResource("/asset/cancel.png"));
     public ImageIcon warning = new ImageIcon(getClass().getResource("/asset/warning.png"));
+    public ImageIcon trash = new ImageIcon(getClass().getResource("/asset/trash.png"));
     HashMap param = new HashMap();
     JasperReport jasreport;
     JasperPrint jasprint;
@@ -121,6 +122,7 @@ public class mTransPenerimaan implements TransPenerimaan {
             ps.setString(8, main.txt_username.getText().trim());
             ps.setString(9, status);
             ps.executeUpdate();
+            ps.close();
             int t = penerimaan.table.getRowCount();
             for (int i = 0; i < t; i++) {
                 String id = penerimaan.table.getValueAt(i, 0).toString();
@@ -133,37 +135,39 @@ public class mTransPenerimaan implements TransPenerimaan {
                 stat2.setString(3, nama);
                 stat2.setString(4, qty);
                 stat2.executeUpdate();
-            }
-            int ok = JOptionPane.showConfirmDialog(null, "Cetak Nota Penerimaan ?", "Transaksi Selesai", JOptionPane.YES_NO_OPTION, HEIGHT, sucess);
-            if (ok == 0) {
-                try {
-                    String NamaFile = "src/report/struk.jasper";
-                    String URL = "jdbc:mysql://localhost:3306/";
-                    String DB = "agendist";
-                    String driver = "com.mysql.jdbc.Driver";
-                    String user = "root";
-                    String pass = "";
-                    Class.forName("com.mysql.jdbc.Driver").newInstance();
-                    Connection connect = DriverManager.getConnection(URL + DB, user, pass);
-                    HashMap param = new HashMap();
-                    param.put("id", penerimaan.nodok.getText());
+                stat2.close();
+                int ok = JOptionPane.showConfirmDialog(null, "Cetak Nota Penerimaan ?", "Transaksi Selesai", JOptionPane.YES_NO_OPTION, HEIGHT, sucess);
+                if (ok == 0) {
+                    try {
+                        String NamaFile = "src/report/struk.jasper";
+                        String URL = "jdbc:mysql://localhost:3306/";
+                        String DB = "agendist";
+                        String driver = "com.mysql.jdbc.Driver";
+                        String user = "root";
+                        String pass = "";
+                        Class.forName("com.mysql.jdbc.Driver").newInstance();
+                        Connection connect = DriverManager.getConnection(URL + DB, user, pass);
+                        HashMap param = new HashMap();
+                        param.put("id", penerimaan.nodok.getText());
 
-                    JasperPrint jPrint = JasperFillManager.fillReport(NamaFile, param, connect);
-                    JasperViewer.viewReport(jPrint, false);
+                        JasperPrint jPrint = JasperFillManager.fillReport(NamaFile, param, connect);
+                        JasperViewer.viewReport(jPrint, false);
+                        fun_Clear(penerimaan);
+                        fun_Disable(penerimaan);
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Gagal Cetak" + e.getMessage(), "Alert Message!", HEIGHT);
+                    }
+                } else {
                     fun_Clear(penerimaan);
                     fun_Disable(penerimaan);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, "Gagal Cetak" + e.getMessage(), "Alert Message!", HEIGHT);
                 }
-            } else {
-                fun_Clear(penerimaan);
-                fun_Disable(penerimaan);
             }
+
             fun_Clear(penerimaan);
             fun_Disable(penerimaan);
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Gagal Bayar " + e.getMessage(), "Alert Message!", HEIGHT);
+            JOptionPane.showMessageDialog(null, "Gagal Menyimpan " + e.getMessage(), "Alert Message!", HEIGHT);
         }
     }
 
@@ -196,27 +200,71 @@ public class mTransPenerimaan implements TransPenerimaan {
 
     @Override
     public void fun_CekStok(TransaksiPenerimaan penerimaan) throws SQLException {
-
+        String stokDB = "";
+        int input = Integer.parseInt(penerimaan.qty.getText());
+        try {
+            String cekStock = "select qty from produk_baik where id='" + penerimaan.id.getText() + "'";
+            String query3 = "INSERT INTO `mutasi_stok`(`notrans`, `tanggal`, `nama`, `id`, `stok`, `qty`, `sisa`, `keterangan`) VALUES (?,?,?,?,?,?,?,?)";
+            Statement stat = koneksi.Server.getConnection().createStatement();
+            ResultSet hasil = stat.executeQuery(cekStock);
+            String ket = "Masuk";
+            while (hasil.next()) {
+                stokDB = hasil.getString("qty");
+            }
+            int qtyDB = Integer.parseInt(stokDB);
+            int h = qtyDB + input;
+            ps = koneksi.Server.getConnection().prepareStatement(query3);
+            ps.setString(1, penerimaan.nodok.getText().trim());
+            ps.setString(2, main.txt_tanggal.getText());
+            ps.setString(3, penerimaan.cb_tujuan.getSelectedItem().toString());
+            ps.setString(4, penerimaan.id.getText());
+            ps.setString(5, stokDB);
+            ps.setString(6, String.valueOf(input));
+            ps.setString(7, String.valueOf(h));
+            ps.setString(8, ket);
+            ps.executeUpdate();
+            fun_Tambah(penerimaan);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Bermasalah Cek Stok: " + e.getMessage(), "Alert Message", HEIGHT, warning);
+        }
     }
 
     @Override
-    public void fun_Delete(TransaksiPenerimaan penerimaan) {
+    public void fun_Delete(TransaksiPenerimaan penerimaan) throws SQLException {
         DefaultTableModel model = (DefaultTableModel) penerimaan.table.getModel();
         int row = penerimaan.table.getSelectedRow();
         if (row >= 0) {
             int ok = JOptionPane.showConfirmDialog(null, "Yakin Mau Hapus?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
             if (ok == 0) {
-                model.removeRow(row);
+                try {
+                    int pilih = penerimaan.table.getSelectedRow();
+                    String bar = "";
+                    bar = (penerimaan.tblmodel.getValueAt(pilih, 0).toString());
+                    con = koneksi.Server.getConnection();
+                    String query = "DELETE FROM mutasi_stok WHERE notrans=? and id=?";
+                    ps = con.prepareStatement(query);
 
-                int rows = model.getRowCount();
-                penerimaan.txt_item.setText("" + rows);
-                //row
-                int total = 0;
-                for (int i = 0; i < penerimaan.table.getRowCount(); i++) {
-                    int amount = Integer.parseInt((String) penerimaan.table.getValueAt(i, 2));
-                    total += amount;
+                    ps.setString(1, penerimaan.nodok.getText());
+                    ps.setString(2, bar);
+                    ps.executeUpdate();
+
+                    JOptionPane.showMessageDialog(null, "Data Terhapus!", "Berhasil", HEIGHT, sucess);
+                    ps.close();
+                    model.removeRow(row);
+
+                    int rows = model.getRowCount();
+                    penerimaan.txt_item.setText("" + rows);
+                    //row
+                    int total = 0;
+                    for (int i = 0; i < penerimaan.table.getRowCount(); i++) {
+                        int amount = Integer.parseInt((String) penerimaan.table.getValueAt(i, 2));
+                        total += amount;
+                    }
+                    penerimaan.txt_qty.setText("" + total);
+
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Ada Sedikit Masalah! " + e.getMessage(), "Gagal", HEIGHT, invalid);
                 }
-                penerimaan.txt_qty.setText("" + total);
 
             } else {
                 penerimaan.id.requestFocus();
